@@ -11,23 +11,27 @@ interface Props {
 }
 
 async function fetchUserData() {
+  /*
   const response = await fetch('https://randomuser.me/api');
   if (!response.ok) {
     throw new Error('Failed to fetch data');
   }
   return response.json();
+  */
 }
 
 const UserTree = async ({ params }: Props) => {
   const { slug } = params;
+  /*
   let data = null;
   let error = null;
 
   try {
     data = await fetchUserData();
-  } catch (err) {
+  } catch (err: any) {
     error = err.message;
   }
+*/
 
   return (
     <main className="min-h-screen w-full flex bg-white dark:bg-gray-950 flex-col">
@@ -65,7 +69,7 @@ const UserTree = async ({ params }: Props) => {
           </div>
         )}
         <div className="w-full flex justify-center flex-col mt-8">
-          <UserTabs data={data} error={error} />
+          <UserTabs data={null} error={null} />
         </div>
       </div>
     </main>
