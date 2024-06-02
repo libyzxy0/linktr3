@@ -22,17 +22,16 @@ async function fetchUserData() {
 
 const UserTree = async ({ params }: Props) => {
   const { slug } = params;
-  /*
+  
   let data = null;
   let error = null;
-
+/*
   try {
     data = await fetchUserData();
   } catch (err: any) {
     error = err.message;
   }
 */
-
   return (
     <main className="min-h-screen w-full flex bg-white dark:bg-gray-950 flex-col">
       <div className="w-full flex flex-col">
