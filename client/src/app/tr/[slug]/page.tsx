@@ -68,7 +68,7 @@ const UserTree = async ({ params }: Props) => {
                     ({"libyzxy0"})
                   </span>
                 </h1>
-                <p className="text-gray-700 dark:text-gray-300 font-medium mt-2">Hello, I' am Jan Liby Dela Costa, 15 years old. I'm a Full Stack Web Developer.</p>
+                <p className="text-gray-700 dark:text-gray-300 font-medium mt-2">{"Hello, I' am Jan Liby Dela Costa, 15 years old. I'm a Full Stack Web Developer."}</p>
               </div>
             )}
             <div className="w-full flex justify-center flex-col mt-8">
