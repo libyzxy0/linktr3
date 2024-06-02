@@ -2,8 +2,7 @@ import type { Metadata, ResolvingMetadata } from 'next';
 import React from 'react';
 
 type Props = {
-  params: { slug: string }, 
-  data: string[]
+  params: { slug: string },
 }
 
 export async function generateMetadata(
