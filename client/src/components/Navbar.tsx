@@ -14,7 +14,7 @@ export const Navbar = () => {
     <>
       <nav className="h-24 md:h-28 bg-white dark:bg-gray-950 md:h-16 flex items-center justify-between px-6 md:px-10">
         <h1 className="font-bold text-[1.7rem] text-gray-700 dark:text-white md:text-3xl">
-          <span className="text-sky-400">Link</span>tr🌲
+          <span className="text-sky-400">Link</span>tr3🌲
         </h1>
         <button
           onClick={toggleMenu}
