@@ -23,7 +23,7 @@ async function fetchUserData() {
 const UserTree = async ({ params }: Props) => {
   const { slug } = params;
   
-  let data = null;
+  let data = true;
   let error = null;
 /*
   try {
