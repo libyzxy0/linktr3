@@ -76,7 +76,7 @@ const UserTree = async ({ params }: Props) => {
             </div>
           </div>
         </div>
-        <Footer className="w-full" />
+        <Footer />
       </main>
     </>
   );
