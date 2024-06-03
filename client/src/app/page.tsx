@@ -2,10 +2,11 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import Image from 'next/image';
 import mockup from '@/assets/images/landing_mockup.svg';
-
+import { OneTapGoogleLogin } from '@/components/OneTapGoogleLogin'
 export default function Landing() {
   return (
     <>
+    <OneTapGoogleLogin />
       <main className="w-full dark:bg-gray-950 h-screen flex flex-col justify-between">
         <Navbar />
         <div className="flex flex-col md:flex-row items-center justify-between h-full px-6 md:px-10">

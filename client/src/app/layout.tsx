@@ -3,7 +3,6 @@ import React from 'react'
 import './globals.css'
 import { Poppins } from 'next/font/google'
 import { ThemeProvider } from "@/components/theme-provider"
- 
 const poppins = Poppins({ subsets: ['latin'], weight: ['400', '700'], })
  
 export const metadata: Metadata = {
@@ -19,14 +18,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={poppins.className}>
-      <ThemeProvider
+        <ThemeProvider
         attribute="class"
         defaultTheme="light"
         enableSystem
         disableTransitionOnChange
           >
-        {children}
-      </ThemeProvider>
+          {children}
+       </ThemeProvider>
       </body>
     </html>
   )
