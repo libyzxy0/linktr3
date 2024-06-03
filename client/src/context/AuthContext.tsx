@@ -1,11 +1,18 @@
-import type { User } from '@/types';
+"use client";
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { cookies } from 'next/headers'
 import axios from 'axios';
+import type { User } from '@/types';
 
-const apiBase = 'http://localhost:5000';
+interface AuthContextType {
+  user: User;
+  login: (email: string, password: string) => Promise<void>;
+  signup: (name: string, username: string, email: string, password: string) => Promise<void>;
+  logout: () => void;
+  getUser: () => Promise<void>;
+}
 
-const initialUser = {
+const initialUser: User = {
   id: '', 
   name: '', 
   username: '', 
@@ -14,91 +21,86 @@ const initialUser = {
   email: '', 
   password: '',
   provider: ''
-}
+};
 
-export const AuthContext = createContext<User>(initialUser);
+const initialAuthContext: AuthContextType = {
+  user: initialUser,
+  login: async () => {},
+  signup: async () => {},
+  logout: () => {},
+  getUser: async () => {}
+};
+
+export const AuthContext = createContext<AuthContextType>(initialAuthContext);
+
+
+const apiBase = 'http://localhost:5000';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User>(initialUser);
-  const cookieStore = cookies();
-  
+
   const getUser = async (): Promise<void> => {
     try {
-    const token: string = cookieStore.get('token');
-    const { data }: { data: User } = await axios.get(apiBase + '/api/get-session',
-      {
+      const token = localStorage.getItem('authtoken');
+      const { data }: { data: User } = await axios.get(apiBase + '/api/get-session', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
-      }
-    );
-    setUser(data);
+      });
+      setUser(data);
     } catch (error: any) {
       setUser(initialUser);
       console.error("Failed to fetch user:", error);
     }
-  }
-  
+  };
+
   /* Fetch user on first render */
   useEffect(() => {
     getUser();
   }, []);
-  
-  
-  /** 
-   * This function makes user authenticated
-   * @params {string} email - User email or username
-   * @params {string} password - User password
-   * @throws {AxiosError} When credentials aren't correct
-   * 
-   * Ang bumasa neto ay kupal!!
-  **/
-  
-  const login = async (email, password) => {
+
+  const login = async (email: string, password: string) => {
     try {
       const { data } = await axios.post(apiBase + '/api/login', {
         email, 
         password
       }, { headers: { 'Content-Type': 'application/json' } });
       const token = data.jwt_token;
-      
-      /* Set JWT token into cookies */
-      cookies().set({
-        name: 'token',
-        value: token,
-        httpOnly: true,
-        path: '/',
-      })
+
+      /* Set JWT token into localStorage */
+      localStorage.setItem('authtoken', token);
       
       /* Refetch user after login */
       await getUser();
     } catch (error: any) {
-      throw new Error(error);
       console.error('Failed to login:', error);
+      throw new Error(error);
     }
-  }
-  
-  /** 
-   * This function makes account for a user
-   * @params {string} name - User full name
-   * @params {string} username - Unique identifier for a user
-   * @params {string} email - User email or username
-   * @params {string} password - User password
-   * @throws {AxiosError} When credentials aren't correct
-   * 
-   * Ang bumasa neto ay kupal!!
-  **/
-  const signup = async (name, username, email, password) => {
+  };
+
+  const signup = async (name: string, username: string, email: string, password: string) => {
     try {
-      
+      const { data } = await axios.post(apiBase + '/api/signup', {
+        name,
+        username,
+        email,
+        password
+      }, { headers: { 'Content-Type': 'application/json' } });
+      const token = data.jwt_token;
+
     } catch (error: any) {
+      console.error('Failed to signup:', error);
       throw new Error(error);
-      console.error('Failed to login:', error);
     }
-  }
-  
+  };
+
   const logout = () => {
     setUser(initialUser);
-  }
-  return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>;
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, login, signup, logout, getUser }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }

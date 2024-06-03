@@ -1,7 +1,6 @@
 'use client';
-
+import { useEffect } from 'react';
 import toast, { Toaster } from "react-hot-toast";
-import { cookies } from 'next/headers'
 import axios from 'axios';
 import loginmockup from "@/assets/images/4957412_Mobile-login.svg";
 import { useState } from "react";
@@ -15,7 +14,11 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
-
+  useEffect(() => {
+    const tok = localStorage.getItem('authtoken');
+    console.log("Token:", tok);
+  }, [])
+  
   return (
     <GoogleOAuthProvider clientId="504207588226-2cqdusdfn1prtd9fagep5gp90e9jqdb3.apps.googleusercontent.com">
       <header className="mx-8 pt-20 bg-white dark:bg-gray-950">
@@ -91,7 +94,7 @@ const OAuthButtons = () => {
   const googleLogin = useGoogleLogin({
     flow: 'auth-code',
     onSuccess: async (codeResponse) => {
-      const tokens = await axios.post(
+      const { data } = await axios.post(
         'http://localhost:5000/api/oauth',
         {}, {
           headers: {
@@ -100,19 +103,15 @@ const OAuthButtons = () => {
           }
       });
       
-      if(tokens.success){
-        cookies().set({
-          name: 'token',
-          value: tokens.token,
-          httpOnly: true,
-          path: '/',
-        })
-        /* Success */
+      if(data.success){
+        localStorage.setItem('authtoken');
+        console.log('Token saved!', data.token)
+        toast.success("Successfully logged in!");
       } else {
-        /* Error */
+        toast.error('Error logging in using google');
       }
     },
-    onError: errorResponse => console.log(errorResponse),
+    onError: errorResponse => toast.error('Error logging in using google'),
   });
   
   return (

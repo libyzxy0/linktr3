@@ -4,7 +4,8 @@ import './globals.css'
 import { Poppins } from 'next/font/google'
 import { ThemeProvider } from "@/components/theme-provider"
 const poppins = Poppins({ subsets: ['latin'], weight: ['400', '700'], })
- 
+import { AuthProvider } from '@/context/AuthContext'
+
 export const metadata: Metadata = {
   title: 'Linktree: Share your quick links!',
   description: 'Share your links to anyone!',
@@ -24,7 +25,9 @@ export default function RootLayout({
         enableSystem
         disableTransitionOnChange
           >
-          {children}
+          <AuthProvider>
+            {children}
+          </AuthProvider>
        </ThemeProvider>
       </body>
     </html>
