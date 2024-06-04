@@ -11,7 +11,11 @@
   "author": "libyzxy0",
   "license": "MIT",
   "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6",
     "drizzle-kit": "^0.22.1",
     "express": "^4.19.2",
     "tsx": "^4.11.0"
