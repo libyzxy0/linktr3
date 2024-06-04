@@ -14,10 +14,6 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
-  useEffect(() => {
-    const tok = localStorage.getItem('authtoken');
-    console.log("Token:", tok);
-  }, [])
   
   return (
     <GoogleOAuthProvider clientId="504207588226-2cqdusdfn1prtd9fagep5gp90e9jqdb3.apps.googleusercontent.com">
@@ -94,9 +90,10 @@ const OAuthButtons = () => {
   const googleLogin = useGoogleLogin({
     flow: 'auth-code',
     onSuccess: async (codeResponse) => {
+      try {
       const { data } = await axios.post(
         'http://localhost:5000/api/oauth',
-        {}, {
+        { flow: 'auth-code' }, {
           headers: {
             'Authorization': `Bearer ${codeResponse.code}`, 
             'Content-Type': 'application/json'
@@ -104,10 +101,13 @@ const OAuthButtons = () => {
       });
       
       if(data.success){
-        localStorage.setItem('authtoken');
+        localStorage.setItem('authtoken', data.token);
         console.log('Token saved!', data.token)
         toast.success("Successfully logged in!");
       } else {
+        toast.error('Error logging in using google');
+      }
+      } catch (error) {
         toast.error('Error logging in using google');
       }
     },

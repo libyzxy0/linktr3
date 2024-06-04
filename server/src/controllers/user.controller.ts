@@ -76,15 +76,39 @@ export const getSession = async (req: Request, res: Response) => {
 
 export const googleOAuth = async (req: Request, res: Response) => {
   try {
+    const flow = req.body.flow;
     const code = ((req.headers['authorization'])?.split('Bearer ')).join("");
-    const { tokens } = await googleOAuthClient.getToken(code);
     
-    const {
-      data: { name, email, picture }
-    } = await axios.get(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${tokens.access_token}`);
+    console.log('Flow:', flow);
     
+    let name, email, picture, sub;
+    
+    if(flow == 'auth-code') {
+      const { tokens } = await googleOAuthClient.getToken(code);
+      const { data } = await axios.get(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${tokens.access_token}`);
+      name = data.name;
+      email = data.email;
+      picture = data.picture;
+      sub = data.sub;
+    } else {
+      const ticket = await googleOAuthClient.verifyIdToken({
+        idToken: code, 
+        audience: process.env.GOOGLE_CLIENT_ID!
+      })
+      const data = ticket.getPayload();
+      name = data.name;
+      email = data.email;
+      picture = data.picture;
+      sub = data.sub;
+    }
+    
+    
+    console.log("User email:", email);
+    /* Find user email if its already exists */
+    /* This code isn't a final yet, because google email can change at any time, i will change it soon into google id */
     const user = await db.select().from(users).where(eq(users.email, email));
     
+    /* Check if there's user */
     if(user.length == 0) {
       const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET_KEY!, { expiresIn: '1d' });
       const data = await db.insert(users).values({ name, username: null, bio: "", email, avatar: picture, password: null, provider: 'google' });
