@@ -16,21 +16,23 @@ function OneTap() {
       console.log(credentials.credential);
       try {
         const { data } = await axios.post(
-        'http://localhost:5000/api/oauth',
-        { flow: 'one-tap' }, {
-          headers: {
-            'Authorization': `Bearer ${credentials.credential}`, 
-            'Content-Type': 'application/json'
-          }
-      });
-      
-      } catch (error) {
-        console.error('Failed to login using one tap by google:',error);
+          'http://localhost:5000/api/oauth',
+          { flow: 'one-tap' }, {
+            headers: {
+              'Authorization': `Bearer ${credentials.credential}`, 
+              'Content-Type': 'application/json'
+            }
+        });
+        
+      } catch (error: any) {
+        console.error('Failed to login using one tap by google:', error);
       }
     },
-    onError: errorResponse => console.log(errorResponse),
+    onError: () => {
+      console.error('An error occurred during Google One Tap login.');
+    },
   });
   return (
     <></>
-  )
+  );
 }
