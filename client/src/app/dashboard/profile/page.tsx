@@ -46,10 +46,10 @@ export default async function EditProfile() {
             {user && (
               <Image
                 className="rounded-full w-[7rem] h-[7rem] md:h-[12rem] md:w-[12rem] border-4 md:border-8 border-sky-300 absolute top-[-3.5rem] md:top-[-6rem] mx-8"
-                src={user.avatar}
+                src={user ? user.avatar : 'https://http.cat/404'}
                 width={100} 
                 height={100}
-                alt={user.name}
+                alt={user ? user.name : 'JL'}
               />
             )}
             <div className="absolute top-0 right-0 mt-4 mr-6">
