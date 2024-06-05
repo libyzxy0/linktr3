@@ -1,8 +1,10 @@
 'use client'
 import { LoaderCircle } from "lucide-react";
-import { experimental_useFormStatus as useFormStatus  } from 'react-dom'
 import { cn } from '@/utils/lib/cn';
 import React from 'react';
+
+// @ts-ignore
+import { experimental_useFormStatus as useFormStatus  } from 'react-dom'
 
 export function SubmitButton({ className, children }: { className?: string, children: React.ReactNode }) {
   const { pending } = useFormStatus()
