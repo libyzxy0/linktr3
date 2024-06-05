@@ -69,9 +69,7 @@ export default function ProfileForm({ user }: { user: User }) {
           />
         </div>
         <div className="flex flex-col mx-8 mt-5">
-          <SubmitButton
-            type="submit"
-          >
+          <SubmitButton>
             Save Changes
           </SubmitButton>
         </div>
