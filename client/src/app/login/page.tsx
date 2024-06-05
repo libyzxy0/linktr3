@@ -41,7 +41,7 @@ export default function Login() {
       }
       
     } 
-  }, [state]);
+  }, [state, router]);
 
   
   return (
