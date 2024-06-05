@@ -7,6 +7,7 @@ import coverImg from '@/assets/images/test_cover.png';
 import ProfileForm from '@/components/ProfileForm'
 import axios from 'axios';
 import type { User } from '@/types'
+import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Edit your profile',

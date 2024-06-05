@@ -7,6 +7,7 @@ import { Footer } from '@/components/Footer'
 import UpdateUsername from '@/components/UpdateUsername'
 import Link from 'next/link'
 import { ProfileAvatar } from '@/components/ProfileAvatar';
+import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Linktr3 | Dashboard',
