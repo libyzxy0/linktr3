@@ -1,6 +1,8 @@
 'use client';
 import axios from 'axios';
+import Cookies from "js-cookie";
 import { GoogleOAuthProvider, useGoogleOneTapLogin } from '@react-oauth/google';
+import { useRouter } from 'next/navigation'
 
 export function OneTapGoogleLogin() {
   return (
@@ -11,6 +13,7 @@ export function OneTapGoogleLogin() {
 }
 
 function OneTap() {
+  const router = useRouter();
   useGoogleOneTapLogin({
     onSuccess: async (credentials) => {
       console.log(credentials.credential);
@@ -23,6 +26,11 @@ function OneTap() {
               'Content-Type': 'application/json'
             }
         });
+        
+        if(data.success) {
+          Cookies.set("authtoken", data.token, { expires: 7 });
+          router.push('/dashboard');
+        }
         
       } catch (error: any) {
         console.error('Failed to login using one tap by google:', error);

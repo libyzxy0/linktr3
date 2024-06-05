@@ -27,7 +27,7 @@ export const register = async (req: Request, res: Response) => {
     
    const salt = bcryptjs.genSaltSync(10);
    const hashedPassword = await bcryptjs.hash(password, salt);
-    const data = await db.insert(users).values({ name, username, bio, email, avatar, password: hashedPassword, povider: 'email' });
+    const data = await db.insert(users).values({ name, username, bio, email, avatar, password: hashedPassword, provider: 'email' });
     res.json({ success: true, message: 'Successfully created account' })
   } catch (error: any) {
     console.log("Account creation error:", error);
@@ -40,7 +40,7 @@ export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const result = await db.select().from(users);
     
-    const user = result.find((u) => u.email === email || u.username === username);
+    const user = result.find((u) => u.email === email || u.username === email);
     if(!user) {
       res.status(404).json({ success: false, message: 'User not found', jwt_token: null });
       return;
@@ -54,12 +54,12 @@ export const login = async (req: Request, res: Response) => {
       res.status(401).json({ success: false, message: 'Incorrect password', jwt_token: null });
       return;
     }
-    const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET_KEY!, { expiresIn: '1d' });
+    const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET_KEY!, { expiresIn: '7d' });
     res.json({ success: true, message: 'Successfully logged in', jwt_token: token })
     } 
   } catch (error: any) {
-    console.log("Account creation error:", error);
-    res.status(400).json({ success: false, message: 'Failed to create account' })
+    console.log("Login failed:", error);
+    res.status(400).json({ success: false, message: 'Failed to login' })
   }
 }
 
@@ -68,6 +68,11 @@ export const getSession = async (req: Request, res: Response) => {
     const token = ((req.headers['authorization'])?.split('Bearer ')).join("");
     const info = jwt.verify(token, process.env.JWT_SECRET_KEY!);
     const result = await db.select().from(users).where(eq(users.id, info.id));
+    console.log(info);
+    
+    if(!result) {
+      res.status(401).json({ success: false, message: 'Unauthorized access' })
+    }
     res.send(result[0]);
   } catch (error: any) {
     res.status(401).json({ success: false, message: 'Unauthorized access' })
@@ -103,23 +108,41 @@ export const googleOAuth = async (req: Request, res: Response) => {
     }
     
     
-    console.log("User email:", email);
     /* Find user email if its already exists */
     /* This code isn't a final yet, because google email can change at any time, i will change it soon into google id */
     const user = await db.select().from(users).where(eq(users.email, email));
     
     /* Check if there's user */
     if(user.length == 0) {
-      const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET_KEY!, { expiresIn: '1d' });
-      const data = await db.insert(users).values({ name, username: null, bio: "", email, avatar: picture, password: null, provider: 'google' });
+      const data = await db.insert(users).values({ name, username: null, bio: "", email, avatar: picture, password: null, provider: 'google' }).returning({ insertedId: users.id });
+      
+      const token = jwt.sign({ id: data[0].insertedId, email }, process.env.JWT_SECRET_KEY!, { expiresIn: '7d' });
       res.json({ success: true, token, message: 'Signed in successfully [10283]' });
     } else {
-      const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET_KEY!, { expiresIn: '1d' });
+      const token = jwt.sign({ id: user[0].id, email: user[0].email }, process.env.JWT_SECRET_KEY!, { expiresIn: '7d' });
       res.json({ success: true, token, message: 'Signed in successfully [10282]' })
     }
   } catch (error: any) {
     console.log(error);
     res.status(400).json({ success: false, token: false, message: "Failed to login using google oauth" })
+  }
+}
+
+export const updateUser = async (req, res) => {
+  try {
+    const token = ((req.headers['authorization'])?.split('Bearer ')).join("");
+    const fields = req.body;
+    const info = jwt.verify(token, process.env.JWT_SECRET_KEY!);
+    const result = await db.select().from(users).where(eq(users.id, info.id));
+    
+    if(!result) {
+      res.status(401).json({ success: false, message: 'Unauthorized access' })
+    }
+    
+    await db.update(users).set(fields).where(eq(users.id, info.id));
+    res.json({ success: true, fields })
+  } catch (error: any) {
+    res.status(401).json({ success: false, message: 'Unauthorized access' })
   }
 }
 

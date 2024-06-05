@@ -16,5 +16,3 @@ app.get('/', (_req: Request, res: Response) => res.send("Hello, World!!"));
 app.use('/api', routes)
 
 app.listen(port, () => console.log(`Server running at localhost:${port}`));
-
-export default app;

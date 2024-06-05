@@ -4,7 +4,8 @@ import {
   login, 
   getSession, 
   requestPlaceholder, 
-  googleOAuth
+  googleOAuth, 
+  updateUser
 } from '@/controllers/user.controller'
 
 const router = express.Router();
@@ -13,6 +14,7 @@ const router = express.Router();
 router.route('/get-session').get(getSession);
 router.route('/register').post(register).get(requestPlaceholder);
 router.route('/login').post(login).get(requestPlaceholder);
+router.route('/update-user').post(updateUser).get(requestPlaceholder);
 
 //Google Authentication 
 router.route('/oauth').post(googleOAuth).get(requestPlaceholder);

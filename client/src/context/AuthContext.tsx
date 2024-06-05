@@ -1,8 +1,8 @@
 "use client";
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import type { User } from '@/types';
+import Cookies from "js-cookie";
 
 interface AuthContextType {
   user: User;
@@ -10,6 +10,7 @@ interface AuthContextType {
   signup: (name: string, username: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   getUser: () => Promise<void>;
+  loading: boolean;
 }
 
 const initialUser: User = {
@@ -28,7 +29,8 @@ const initialAuthContext: AuthContextType = {
   login: async () => {},
   signup: async () => {},
   logout: () => {},
-  getUser: async () => {}
+  getUser: async () => {}, 
+  loading: false
 };
 
 export const AuthContext = createContext<AuthContextType>(initialAuthContext);
@@ -38,10 +40,11 @@ const apiBase = 'http://localhost:5000';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User>(initialUser);
-
+  const [loading, setLoading] = useState(false);
   const getUser = async (): Promise<void> => {
     try {
-      const token = localStorage.getItem('authtoken');
+      setLoading(true);
+      const token = Cookies.get('authtoken');
       const { data }: { data: User } = await axios.get(apiBase + '/api/get-session', {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -51,6 +54,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error: any) {
       setUser(initialUser);
       console.error("Failed to fetch user:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -67,8 +72,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }, { headers: { 'Content-Type': 'application/json' } });
       const token = data.jwt_token;
 
-      /* Set JWT token into localStorage */
-      localStorage.setItem('authtoken', token);
+      /* Set JWT token into cookies */
+      Cookies.set("authtoken", token, { expires: 7 });
       
       /* Refetch user after login */
       await getUser();
@@ -99,7 +104,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, getUser }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, getUser, loading }}>
       {children}
     </AuthContext.Provider>
   );
