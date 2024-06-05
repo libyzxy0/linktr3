@@ -4,7 +4,7 @@ import { cookies } from 'next/headers'
 import {apiBase} from '@/constants';
 import { revalidatePath } from 'next/cache'
 
-export async function makeLogin(_currentData, formData: FormData) {
+export async function makeLogin(_currentData: any, formData: FormData) {
     try {
       console.log(formData)
       const { data } = await axios.post(apiBase + '/api/login', {
