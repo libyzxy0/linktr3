@@ -1,5 +1,5 @@
 'use client';
-
+ // @ts-ignore
 import toast, { Toaster } from 'react-hot-toast';
 import { useState, useEffect } from 'react';
 import axios from 'axios';

@@ -1,4 +1,5 @@
 'use client';
+// @ts-ignore
 import { useRouter } from 'next/navigation'
 import toast, { Toaster } from 'react-hot-toast';
 import { useState, useEffect } from 'react';

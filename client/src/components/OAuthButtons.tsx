@@ -78,7 +78,7 @@ export const OAuthBtn = () => {
       </button>
       <button
         type="button"
-        className="inline-flex h-10 w-full items-center justify-center gap-2 rounded border border-slate-300 p-2 text-sm font-medium bg-white outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-60 mt-4 bg-gray-700"
+        className="inline-flex h-10 w-full items-center justify-center gap-2 rounded border border-slate-300 p-2 text-sm font-medium bg-white outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-60 mt-4 bg-gray-700 text-gray-700"
       >
         <Image
           width={40}

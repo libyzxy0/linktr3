@@ -1,5 +1,5 @@
 'use client';
-
+ // @ts-ignore
 import Image from 'next/image';
 import type { User } from '@/types';
 import { experimental_useFormState as useFormState  } from 'react-dom'
