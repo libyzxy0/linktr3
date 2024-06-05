@@ -31,7 +31,7 @@ export default async function Dashboard() {
           </h1>
           <div className="flex flex-row items-center space-x-3 mx-4">
             <ModeToggle />
-            <Image className="h-10 w-10 rounded-full border-2 border-sky-400" height={40} width={40} src={user.avatar} />
+            <Image className="h-10 w-10 rounded-full border-2 border-sky-400" height={40} width={40} src={user.avatar ? user.avatar : `https://ui-avatars.com/api/?background=fff&color=38bdf8&bold=true&name=${user.name}`} />
           </div>
         </nav>
         
