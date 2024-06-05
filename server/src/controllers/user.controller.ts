@@ -132,17 +132,53 @@ export const updateUser = async (req, res) => {
   try {
     const token = ((req.headers['authorization'])?.split('Bearer ')).join("");
     const fields = req.body;
+    const listUsers = await db.select().from(users);
+    
     const info = jwt.verify(token, process.env.JWT_SECRET_KEY!);
     const result = await db.select().from(users).where(eq(users.id, info.id));
     
+    const isExist = listUsers.find((u) => u.email === fields?.email || u.username === fields?.username);
+    
+    if(isExist && isExist.id != info.id) {
+      res.status(409).json({ success: false, message: 'User already used that value' })
+      return;
+    }
+    
     if(!result) {
       res.status(401).json({ success: false, message: 'Unauthorized access' })
+      return;
     }
     
     await db.update(users).set(fields).where(eq(users.id, info.id));
     res.json({ success: true, fields })
   } catch (error: any) {
     res.status(401).json({ success: false, message: 'Unauthorized access' })
+  }
+}
+
+export const getUserPublicProfile = async (req: Request, res: Response) => {
+  try {
+    const { username } = req.body;
+    if(!username) {
+      res.status(404).json({ success: false, message: "Missing parameter 'username'" })
+      return;
+    }
+    const user = await db.select().from(users).where(eq(users.username, username));
+    if(user.length == 0) {
+      res.status(404).json({ success: false, message: `User ${username} is not found`})
+    } else {
+      const publicProfile = {
+        name: user[0].name, 
+        username: user[0].username,
+        email: user[0].email,
+        bio: user[0].bio,
+        avatar: user[0].avatar
+      }
+      res.json({ success: true, user: publicProfile });
+    } 
+  } catch (error: any) {
+    console.log("Error getting user public profile:", error);
+    res.status(400).json({ success: false, message: 'Something went wrong' })
   }
 }
 

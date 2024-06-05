@@ -5,18 +5,20 @@ import {
   getSession, 
   requestPlaceholder, 
   googleOAuth, 
-  updateUser
+  updateUser, 
+  getUserPublicProfile
 } from '@/controllers/user.controller'
 
 const router = express.Router();
 
-// Email Authentication 
+// Authentication 
 router.route('/get-session').get(getSession);
 router.route('/register').post(register).get(requestPlaceholder);
 router.route('/login').post(login).get(requestPlaceholder);
 router.route('/update-user').post(updateUser).get(requestPlaceholder);
+router.route('/get-user').post(getUserPublicProfile).get(requestPlaceholder);
 
-//Google Authentication 
+//Google OAuth 
 router.route('/oauth').post(googleOAuth).get(requestPlaceholder);
 
 export default router;
