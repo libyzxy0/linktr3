@@ -25,15 +25,24 @@ export default async function Dashboard() {
   return (
     <>
       <div className="flex flex-col min-h-screen bg-white dark:bg-gray-950">
-        <nav className="sticky top-0 flex items-center justify-between h-16 border-b border-gray-200 dark:border-gray-800 z-40 bg-white dark:bg-gray-950">
-          <h1 className="font-bold text-[1.7rem] text-gray-700 dark:text-white md:text-3xl mx-4">
-            <span className="text-sky-400">Link</span>tr3🌲
-          </h1>
-          <div className="flex flex-row items-center space-x-3 mx-4">
-            <ModeToggle />
-            <Image className="h-10 w-10 rounded-full border-2 border-sky-400" height={40} width={40} src={user.avatar ? user.avatar : `https://ui-avatars.com/api/?background=fff&color=38bdf8&bold=true&name=${user.name}`} />
-          </div>
-        </nav>
+      
+      <nav className="sticky top-0 flex items-center justify-between h-16 border-b border-gray-200 dark:border-gray-800 z-40 bg-white dark:bg-gray-950">
+  <h1 className="font-bold text-[1.7rem] text-gray-700 dark:text-white md:text-3xl mx-4">
+    <span className="text-sky-400">Link</span>tr3🌲
+  </h1>
+  <div className="flex flex-row items-center space-x-3 mx-4">
+    <ModeToggle />
+    <Image
+      className="h-10 w-10 rounded-full border-2 border-sky-400"
+      height={40}
+      width={40}
+      src={user.avatar ? user.avatar : `https://ui-avatars.com/api/?background=fff&color=38bdf8&bold=true&name=${user.name}`}
+      alt="User Avatar"
+    />
+  </div>
+</nav>
+
+        
         
         <main className="flex-grow pt-8 mx-6 md:mx-10">
           <div>
