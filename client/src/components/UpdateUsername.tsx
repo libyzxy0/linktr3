@@ -1,10 +1,12 @@
 'use client';
- // @ts-ignore
+
 import Image from 'next/image';
 import type { User } from '@/types';
-import { experimental_useFormState as useFormState  } from 'react-dom'
 import { updateUsername } from '@/app/actions'
 import { SubmitButton } from '@/components/SubmitButton';
+
+// @ts-ignore
+import { experimental_useFormState as useFormState  } from 'react-dom'
 
 export default function UpdateUsername({ user }: { user: User }) {
   const [state, formAction] = useFormState(updateUsername, { message: '', error: false });

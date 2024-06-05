@@ -1,5 +1,5 @@
 'use client';
- // @ts-ignore
+
 import toast, { Toaster } from 'react-hot-toast';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -12,8 +12,10 @@ import { OAuthButtons } from '@/components/OAuthButtons';
 import { apiBase } from '@/constants';
 import { SubmitButton } from '@/components/SubmitButton';
 import { cookies } from 'next/headers'
-import { experimental_useFormState as useFormState  } from 'react-dom'
 import { createUser } from '@/app/actions';
+
+// @ts-ignore
+import { experimental_useFormState as useFormState  } from 'react-dom'
 
 const initialState = {
   message: '',
