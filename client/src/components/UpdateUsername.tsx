@@ -21,7 +21,7 @@ export default function UpdateUsername({ user }: { user: User }) {
         toast.success(state.message);
       }
     } 
-  }, [state, toast]);
+  }, [state]);
   
   return (
     <>

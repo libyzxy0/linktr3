@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation'
 type ProfileAvatarProps = {
   avatar: string;
-  name: string;
+  name: string | undefined;
 }
 export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
   const router = useRouter();

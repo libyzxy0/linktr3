@@ -39,7 +39,7 @@ export default async function Dashboard() {
   </h1>
   <div className="flex flex-row items-center space-x-3 mx-4">
     <ModeToggle />
-    <ProfileAvatar avatar={user.avatar} name={user.name} />
+    <ProfileAvatar avatar={user.avatar} name={user.name ? user.name : "AE"} />
   </div>
 </nav>
 
