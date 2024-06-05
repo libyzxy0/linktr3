@@ -62,14 +62,21 @@ export async function updateUsername(_currentData: any, formData: FormData) {
   try {
     const cookieStore = cookies()
     const token = cookieStore.get('authtoken');
+    if(token) {
       const { data } = await axios.post(apiBase + '/api/update-user', {
         username: formData.get('username'),
-      }, { headers: { 'Authorization': `Bearer ${token.value}`, 'Content-Type': 'application/json' } });
+      }, { headers: { 'Authorization': `Bearer ${token?.value}`, 'Content-Type': 'application/json' } });
       revalidatePath('/dashboard');
       return {
         error: false, 
         message: data.message,
       }
+    } else {
+      return {
+        error: true, 
+        message: "No authtoken provided",
+      }
+    }
     } catch (error: any) {
       console.error('Failed to create your account:', error);
       return {
