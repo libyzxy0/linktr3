@@ -7,6 +7,7 @@ import axios from 'axios'
 import { useGoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import Cookies from "js-cookie";
 import Image from 'next/image';
+import { apiBase } from '@/constants';
 
 export const OAuthButtons = () => {
   return (
@@ -25,7 +26,7 @@ export const OAuthBtn = () => {
       try {
         setGLoading(true);
       const { data } = await axios.post(
-        'http://localhost:5000/api/oauth',
+        apiBase + '/api/oauth',
         { flow: 'auth-code' }, {
           headers: {
             'Authorization': `Bearer ${codeResponse.code}`, 

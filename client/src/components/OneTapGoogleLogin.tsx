@@ -3,6 +3,7 @@ import axios from 'axios';
 import Cookies from "js-cookie";
 import { GoogleOAuthProvider, useGoogleOneTapLogin } from '@react-oauth/google';
 import { useRouter } from 'next/navigation'
+import { apiBase } from '@/constants';
 
 export function OneTapGoogleLogin() {
   return (
@@ -19,7 +20,7 @@ function OneTap() {
       console.log(credentials.credential);
       try {
         const { data } = await axios.post(
-          'http://localhost:5000/api/oauth',
+          apiBase + '/api/oauth',
           { flow: 'one-tap' }, {
             headers: {
               'Authorization': `Bearer ${credentials.credential}`, 
