@@ -12,7 +12,7 @@ export default async function Dashboard() {
   const token = cookieStore.get('authtoken');
   const { data: user }: { data: User } = await axios.get(apiBase + '/api/get-session', {
     headers: {
-      'Authorization': `Bearer ${token.value}`
+      'Authorization': `Bearer ${token?.value}`
     }
   });
   
