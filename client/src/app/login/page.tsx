@@ -59,7 +59,7 @@ export default function Login() {
             <input
               name="email"
               className="outline-none py-2 rounded-lg hover:border-sky-400 mt-2 border-[1.5px] border-gray-200 px-4 bg-white dark:bg-gray-800 dark:border-gray-700"
-              type="email"
+              type="text"
               placeholder="john.doe@example.com / john.doe"
             />
           </div>

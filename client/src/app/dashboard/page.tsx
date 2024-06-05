@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { cookies } from 'next/headers'
 import axios from 'axios';
 import type { User } from '@/types';
@@ -7,6 +6,13 @@ import { ModeToggle } from '@/components/theme-toggle'
 import { Footer } from '@/components/Footer'
 import UpdateUsername from '@/components/UpdateUsername'
 import Link from 'next/link'
+import { ProfileAvatar } from '@/components/ProfileAvatar';
+
+export const metadata: Metadata = {
+  title: 'Linktr3 | Dashboard',
+  description: 'Manage your things!',
+}
+
 export default async function Dashboard() {
   const cookieStore = cookies()
   const token = cookieStore.get('authtoken');
@@ -32,13 +38,7 @@ export default async function Dashboard() {
   </h1>
   <div className="flex flex-row items-center space-x-3 mx-4">
     <ModeToggle />
-    <Image
-      className="h-10 w-10 rounded-full border-2 border-sky-400"
-      height={40}
-      width={40}
-      src={user.avatar ? user.avatar : `https://ui-avatars.com/api/?background=fff&color=38bdf8&bold=true&name=${user.name}`}
-      alt="User Avatar"
-    />
+    <ProfileAvatar avatar={user.avatar} name={user.name} />
   </div>
 </nav>
 

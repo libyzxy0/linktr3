@@ -60,28 +60,64 @@ export async function createUser(_currentData: any, formData: FormData) {
   
 export async function updateUsername(_currentData: any, formData: FormData) {
   try {
-    const cookieStore = cookies()
+    const cookieStore = cookies();
     const token = cookieStore.get('authtoken');
-    if(token) {
+    
+    if (token) {
       const { data } = await axios.post(apiBase + '/api/update-user', {
         username: formData.get('username'),
       }, { headers: { 'Authorization': `Bearer ${token?.value}`, 'Content-Type': 'application/json' } });
+
       revalidatePath('/dashboard');
-      return {
-        error: false, 
-        message: data.message,
-      }
     } else {
       return {
         error: true, 
         message: "No authtoken provided",
-      }
+      };
     }
-    } catch (error: any) {
-      console.error('Failed to create your account:', error);
+  } catch (error: any) {
+    console.error('Failed to create your account:', error);
+    return {
+      error: true, 
+      message: error.response ? error.response.data.message : error.message,
+    };
+  }
+}
+
+export async function updateUser(_currentData: any, formData: FormData) {
+  try {
+    const cookieStore = cookies();
+    const token = cookieStore.get('authtoken');
+    
+    if (token) {
+      const formDataEntries = {
+        username: formData.get('username'),
+        name: formData.get('name'),
+        bio: formData.get('bio'),
+        password: formData.get('password'),
+        avatar: formData.get('avatar'),
+        email: formData.get('email')
+      };
+      const requestData = Object.fromEntries(Object.entries(formDataEntries).filter(([_, v]) => v));
+      console.log(requestData)
+      const { data } = await axios.post(apiBase + '/api/update-user', requestData, { headers: { 'Authorization': `Bearer ${token?.value}`, 'Content-Type': 'application/json' } });
+
+      revalidatePath('/dashboard/profile');
+      return {
+        error: false, 
+        message: "Success",
+      };
+    } else {
       return {
         error: true, 
-        message: error.response ? error.response.data.message : error.message,
-      }
+        message: "No authtoken provided",
+      };
     }
-} 
+  } catch (error: any) {
+    console.error('Failed to create your account:', error);
+    return {
+      error: true, 
+      message: error.response ? error.response.data.message : error.message,
+    };
+  }
+}

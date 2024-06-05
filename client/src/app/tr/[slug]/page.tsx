@@ -5,35 +5,34 @@ import UserTabs from '@/components/UserTabs';
 import { ModeToggle } from '@/components/theme-toggle';
 import { Copylink } from '@/components/Copylink'
 import { Footer } from '@/components/Footer'
-
+import axios from 'axios';
+import { apiBase } from '@/constants'
 interface Props {
   params: {
     slug: string;
   };
 }
 
-async function fetchUserData() {
-  /*
-  const response = await fetch('https://randomuser.me/api');
-  if (!response.ok) {
-    throw new Error('Failed to fetch data');
-  }
-  return response.json();
-  */
-}
-
 const UserTree = async ({ params }: Props) => {
   const { slug } = params;
-  
-  let data = true;
-  let error = null;
-/*
+  let data;
+  let error;
   try {
-    data = await fetchUserData();
+    const response = await axios.post(apiBase + '/api/get-user', { username: slug });
+    data = response.data;
   } catch (err: any) {
-    error = err.message;
+    console.log(err)
+    error = err;
   }
-*/
+  
+  if(!data && error) {
+    return (
+      <div className="h-[90vh] flex justify-center items-center">
+        <h1 className="text-5xl font-bold text-gray-700 animate-pulse">404</h1>
+      </div>
+    )
+  }
+  
   return (
     <>
       <main className="min-h-screen flex flex-col bg-white dark:bg-gray-950">
@@ -49,7 +48,7 @@ const UserTree = async ({ params }: Props) => {
               {data && (
                 <Image
                   className="rounded-full w-[7rem] h-[7rem] md:h-[12rem] md:w-[12rem] border-4 md:border-8 border-sky-300 absolute top-[-3.5rem] md:top-[-6rem] mx-8"
-                  src={profileImg}
+                  src={data?.user.avatar}
                   width={100} 
                   height={100}
                   alt="Profile Picture"
@@ -63,12 +62,12 @@ const UserTree = async ({ params }: Props) => {
             {data && (
               <div className="flex flex-col mt-[4.5rem] md:mt-[7.3rem] mx-8">
                 <h1 className="text-gray-700 dark:text-white">
-                  <span className="text-2xl font-bold">Jan Liby Dela Costa</span>{' '}
+                  <span className="text-2xl font-bold">{data?.user.name}</span>{' '}
                   <span className="font-medium text-gray-700 dark:text-gray-200 text-md">
-                    ({"libyzxy0"})
+                    ({data?.user.username})
                   </span>
                 </h1>
-                <p className="text-gray-700 dark:text-gray-300 font-medium mt-2">{"Hello, I' am Jan Liby Dela Costa, 15 years old. I'm a Full Stack Web Developer."}</p>
+                <p className="text-gray-700 dark:text-gray-300 font-medium mt-2">{data?.user.bio ? data.user.bio : 'No description' }</p>
               </div>
             )}
             <div className="w-full flex justify-center flex-col mt-8">

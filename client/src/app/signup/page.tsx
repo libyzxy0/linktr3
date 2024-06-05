@@ -13,6 +13,7 @@ import { apiBase } from '@/constants';
 import { SubmitButton } from '@/components/SubmitButton';
 import { cookies } from 'next/headers'
 import { createUser } from '@/app/actions';
+import { useRouter } from 'next/navigation'
 
 // @ts-ignore
 import { experimental_useFormState as useFormState  } from 'react-dom'
@@ -22,17 +23,25 @@ const initialState = {
   error: false
 }
 
-export default function Login() {
+export default function Signup() {
   const [state, formAction] = useFormState(createUser, initialState);
   const [show, setShow] = useState(false);
   const [password, setPassword] = useState("");
+  const router = useRouter();
   
   useEffect(() => {
     if(state.message) {
-      state.error ? toast.error(state.message) : toast.success(state.message);
+      if(state.error) {
+        toast.error(state.message);
+      } else {
+        toast.success(state.message);
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000);
+      }
+      
     } 
   }, [state, toast]);
-
   
   return (
     <>
