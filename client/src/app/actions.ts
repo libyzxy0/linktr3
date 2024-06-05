@@ -33,7 +33,7 @@ export async function makeLogin(_currentData: any, formData: FormData) {
     
   }
   
-export async function createUser(_currentData, formData: FormData) {
+export async function createUser(_currentData: any, formData: FormData) {
     try {
       console.log(formData)
       const { data } = await axios.post(apiBase + '/api/register', {
@@ -58,7 +58,7 @@ export async function createUser(_currentData, formData: FormData) {
     
   }
   
-export async function updateUsername(_currentData, formData: FormData) {
+export async function updateUsername(_currentData: any, formData: FormData) {
   try {
     const cookieStore = cookies()
     const token = cookieStore.get('authtoken');
