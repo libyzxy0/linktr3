@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import toast, {Toaster} from 'react-hot-toast';
 import { updateUser } from '@/app/actions';
 import { SubmitButton } from '@/components/SubmitButton';
+import type { User } from '@/types';
 
 // @ts-ignore
 import { experimental_useFormState as useFormState } from 'react-dom';
