@@ -16,6 +16,7 @@ export const users = pgTable('users', {
 
 export const usersRelations = relations(users, ({ many }) => ({
   links: many(links),
+  cards: many(cards)
 }));
 
 export const links = pgTable('links', {
@@ -43,3 +44,10 @@ export const cards = pgTable('cards', {
   url: varchar('url').notNull(), 
   clicks: integer('clicks').notNull()
 });
+
+export const cardsRelations = relations(links, ({ one }) => ({
+  author: one(users, {
+    fields: [cards.user_id],
+    references: [users.id],
+  }),
+}));

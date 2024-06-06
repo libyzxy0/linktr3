@@ -7,6 +7,7 @@ import { eq } from 'drizzle-orm';
 export const createLink = async (req: Request, res: Response) => {
   try {
     const token = ((req.headers['authorization'])?.split('Bearer ')).join("");
+    const fields = req.body;
     const { name, url, logo } = req.body;
     const info = jwt.verify(token, process.env.JWT_SECRET_KEY!);
     const result = await db.select().from(users).where(eq(users.id, info.id));
@@ -22,11 +23,12 @@ export const createLink = async (req: Request, res: Response) => {
     console.log(error);
     res.status(400).json({ success: false, message: 'Something went wrong' })
   }
-} 
+}
 
-export const readLinks = async (req: Request, res: Response) => {
+export const updateLink = async (req: Request, res: Response) => {
   try {
     const token = ((req.headers['authorization'])?.split('Bearer ')).join("");
+    const fields = req.body;
     const { name, url, logo } = req.body;
     const info = jwt.verify(token, process.env.JWT_SECRET_KEY!);
     const result = await db.select().from(users).where(eq(users.id, info.id));
@@ -34,16 +36,11 @@ export const readLinks = async (req: Request, res: Response) => {
     if(result.length == 0) {
       return res.status(401).json({ success: false, message: 'Unauthorized access' })
     } else {
-      const listLinks = await db.select().from(links).where(eq(links.user_id, result[0].id));
-      
-      res.json({ success: true, data: listLinks })
+      await db.update(users).set(fields).where(eq(users.id, result[0].id));
+      res.json({ success: true, message: 'Link updated successfully', fields })
     }
   } catch (error: any) {
+    console.log(error);
     res.status(400).json({ success: false, message: 'Something went wrong' })
   }
-} 
-
-export const test = async (req: Request, res: Response) => {
-  console.log("Request:", req.body);
-  res.send('Ok')
 }
