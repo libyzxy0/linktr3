@@ -8,9 +8,9 @@ import { ButtonLink } from "@/components/ButtonLink";
 import type { Link, Card as CardType } from "@/types";
 
 interface UserTabsProps {
-  links: Link[] | null;
-  cards: CardType[] | null;
-  error: string | null;
+  links: Link[];
+  cards: CardType[];
+  error: string;
 }
 
 const UserTabs: React.FC<UserTabsProps> = ({ links, cards, error }) => {

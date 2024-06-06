@@ -88,11 +88,13 @@ const UserTree = async ({ params }: Props) => {
               </div>
             )}
             <div className="w-full flex justify-center flex-col mt-8">
-              <UserTabs
-                links={data?.user.links}
-                cards={data?.user.cards}
-                error={null}
-              />
+              {data?.user.links && (
+                <UserTabs
+                  links={data?.user.links}
+                  cards={data?.user.cards}
+                  error={null}
+                />
+              )}
             </div>
           </div>
         </div>
