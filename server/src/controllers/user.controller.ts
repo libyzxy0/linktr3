@@ -7,6 +7,8 @@ import { db } from '@/db';
 import { eq } from 'drizzle-orm';
 import { googleOAuthClient, UserRefreshClient } from '@/utils/lib/google-client';
 
+const salt = bcryptjs.genSaltSync(10);
+
 export const register = async (req: Request, res: Response) => {
   try {
     const { name, username, email, bio, avatar, password } = req.body;
@@ -25,9 +27,8 @@ export const register = async (req: Request, res: Response) => {
       return;
     }
     
-   const salt = bcryptjs.genSaltSync(10);
    const hashedPassword = await bcryptjs.hash(password, salt);
-    const data = await db.insert(users).values({ name, username, bio, email, avatar, password: hashedPassword, provider: 'email' });
+    const data = await db.insert(users).values({ name, username, bio, email, avatar, password: hashedPassword, provider: 'email', visits: 0, cover: ''});
     res.json({ success: true, message: 'Successfully created account' })
   } catch (error: any) {
     console.log("Account creation error:", error);
@@ -46,12 +47,12 @@ export const login = async (req: Request, res: Response) => {
       return;
     } else {
       if(!user.password) {
-        res.status(401).json({ success: false, message: 'Incorrect password', jwt_token: null });
+        res.status(401).json({ success: false, message: 'Incorrect password [G]', jwt_token: null });
         return;
       }
     const isCorrectPass = await bcryptjs.compare(password, user.password);
     if(!isCorrectPass) {
-      res.status(401).json({ success: false, message: 'Incorrect password', jwt_token: null });
+      res.status(401).json({ success: false, message: 'Incorrect password [E]', jwt_token: null });
       return;
     }
     const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET_KEY!, { expiresIn: '7d' });
@@ -68,7 +69,6 @@ export const getSession = async (req: Request, res: Response) => {
     const token = ((req.headers['authorization'])?.split('Bearer ')).join("");
     const info = jwt.verify(token, process.env.JWT_SECRET_KEY!);
     const result = await db.select().from(users).where(eq(users.id, info.id));
-    console.log(info);
     
     if(!result) {
       res.status(401).json({ success: false, message: 'Unauthorized access' })
@@ -83,8 +83,6 @@ export const googleOAuth = async (req: Request, res: Response) => {
   try {
     const flow = req.body.flow;
     const code = ((req.headers['authorization'])?.split('Bearer ')).join("");
-    
-    console.log('Flow:', flow);
     
     let name, email, picture, sub;
     
@@ -114,7 +112,7 @@ export const googleOAuth = async (req: Request, res: Response) => {
     
     /* Check if there's user */
     if(user.length == 0) {
-      const data = await db.insert(users).values({ name, username: null, bio: "", email, avatar: picture, password: null, provider: 'google' }).returning({ insertedId: users.id });
+      const data = await db.insert(users).values({ name, username: null, bio: "", email, avatar: picture, password: null, provider: 'google',  visits: 0, cover: '' }).returning({ insertedId: users.id });
       
       const token = jwt.sign({ id: data[0].insertedId, email }, process.env.JWT_SECRET_KEY!, { expiresIn: '7d' });
       res.json({ success: true, token, message: 'Signed in successfully [10283]' });
@@ -134,53 +132,70 @@ export const updateUser = async (req, res) => {
     const fields = req.body;
     const listUsers = await db.select().from(users);
     
-    const info = jwt.verify(token, process.env.JWT_SECRET_KEY!);
+    const info = jwt.verify(token, process.env.JWT_SECRET_KEY);
     const result = await db.select().from(users).where(eq(users.id, info.id));
     
     const isExist = listUsers.find((u) => u.email === fields?.email || u.username === fields?.username);
     
-    if(isExist && isExist.id != info.id) {
-      res.status(409).json({ success: false, message: 'User already used that value' })
+    if (isExist && isExist.id !== info.id) {
+      res.status(409).json({ success: false, message: 'User already used that value' });
       return;
     }
     
-    if(!result) {
-      res.status(401).json({ success: false, message: 'Unauthorized access' })
+    if (!result) {
+      res.status(401).json({ success: false, message: 'Unauthorized access' });
       return;
+    }
+
+    if (fields.password) {
+      const salt = await bcryptjs.genSalt(10);
+      fields.password = await bcryptjs.hash(fields.password, salt);
     }
     
     await db.update(users).set(fields).where(eq(users.id, info.id));
-    res.json({ success: true, fields })
-  } catch (error: any) {
-    res.status(401).json({ success: false, message: 'Unauthorized access' })
+    res.json({ success: true, fields });
+  } catch (error) {
+    res.status(401).json({ success: false, message: 'Unauthorized access' });
   }
-}
+};
 
 export const getUserPublicProfile = async (req: Request, res: Response) => {
   try {
     const { username } = req.body;
-    if(!username) {
-      res.status(404).json({ success: false, message: "Missing parameter 'username'" })
+    if (!username) {
+      res.status(404).json({ success: false, message: "Missing parameter 'username'" });
       return;
     }
-    const user = await db.select().from(users).where(eq(users.username, username));
-    if(user.length == 0) {
-      res.status(404).json({ success: false, message: `User ${username} is not found`})
-    } else {
-      const publicProfile = {
-        name: user[0].name, 
-        username: user[0].username,
-        email: user[0].email,
-        bio: user[0].bio,
-        avatar: user[0].avatar
+
+    const user = await db.query.users.findFirst({
+      where: ((users, { eq }) => eq(users.username, username)),
+      with: {
+        links: true
       }
+    });
+    if (!user) {
+      res.status(404).json({ success: false, message: `User ${username} is not found` });
+    } else {
+      await db.update(users).set({ visits: user.visits + 1 }).where(eq(users.id, user.id));
+      const publicProfile = {
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        bio: user.bio,
+        avatar: user.avatar,
+        cover: user.cover,
+        visits: user.visits + 1, //Add 1 because cant read latest update of visits
+        links: user.links,
+        cards: user.cards
+      };
       res.json({ success: true, user: publicProfile });
-    } 
+    }
   } catch (error: any) {
     console.log("Error getting user public profile:", error);
-    res.status(400).json({ success: false, message: 'Something went wrong' })
+    res.status(400).json({ success: false, message: 'Something went wrong' });
   }
-}
+};
+
 
 export const requestPlaceholder = (_req: Request, res: Response) => {
   res.status(400).json({ message: 'Cannot GET, perform a POST request instead' })

@@ -1,4 +1,5 @@
-import { pgTable, varchar, uuid } from 'drizzle-orm/pg-core';
+import { pgTable, varchar, uuid, integer } from 'drizzle-orm/pg-core';
+import { relations } from 'drizzle-orm'
 
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().notNull(),
@@ -8,8 +9,14 @@ export const users = pgTable('users', {
   email: varchar('email').notNull(), 
   avatar: varchar('avatar'), 
   password: varchar('password'), 
-  provider: varchar('provider').notNull()
+  provider: varchar('provider').notNull(), 
+  visits: integer('visits').notNull(), 
+  cover: varchar('cover')
 });
+
+export const usersRelations = relations(users, ({ many }) => ({
+  links: many(links),
+}));
 
 export const links = pgTable('links', {
   id: uuid('id').primaryKey().notNull(),
@@ -17,7 +24,15 @@ export const links = pgTable('links', {
   name: varchar('name').notNull(),
   logo: varchar('logo'),  
   url: varchar('url').notNull(), 
+  clicks: integer('clicks').notNull()
 });
+
+export const linksRelations = relations(links, ({ one }) => ({
+  author: one(users, {
+    fields: [links.user_id],
+    references: [users.id],
+  }),
+}));
 
 export const cards = pgTable('cards', {
   id: uuid('id').primaryKey().notNull(),
@@ -26,4 +41,5 @@ export const cards = pgTable('cards', {
   description: varchar('description').notNull(), 
   image: varchar('image').notNull(), 
   url: varchar('url').notNull(), 
+  clicks: integer('clicks').notNull()
 });

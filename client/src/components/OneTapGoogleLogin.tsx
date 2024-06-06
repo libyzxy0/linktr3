@@ -1,16 +1,16 @@
-'use client';
-import axios from 'axios';
+"use client";
+import axios from "axios";
 import Cookies from "js-cookie";
-import { GoogleOAuthProvider, useGoogleOneTapLogin } from '@react-oauth/google';
-import { useRouter } from 'next/navigation'
-import { apiBase } from '@/constants';
+import { GoogleOAuthProvider, useGoogleOneTapLogin } from "@react-oauth/google";
+import { useRouter } from "next/navigation";
+import { apiBase } from "@/constants";
 
 export function OneTapGoogleLogin() {
   return (
     <GoogleOAuthProvider clientId="504207588226-2cqdusdfn1prtd9fagep5gp90e9jqdb3.apps.googleusercontent.com">
       <OneTap />
     </GoogleOAuthProvider>
-  )
+  );
 }
 
 function OneTap() {
@@ -20,28 +20,27 @@ function OneTap() {
       console.log(credentials.credential);
       try {
         const { data } = await axios.post(
-          apiBase + '/api/oauth',
-          { flow: 'one-tap' }, {
+          apiBase + "/api/oauth",
+          { flow: "one-tap" },
+          {
             headers: {
-              'Authorization': `Bearer ${credentials.credential}`, 
-              'Content-Type': 'application/json'
-            }
-        });
-        
-        if(data.success) {
+              Authorization: `Bearer ${credentials.credential}`,
+              "Content-Type": "application/json",
+            },
+          },
+        );
+
+        if (data.success) {
           Cookies.set("authtoken", data.token, { expires: 7 });
-          router.push('/dashboard');
+          router.push("/dashboard");
         }
-        
       } catch (error: any) {
-        console.error('Failed to login using one tap by google:', error);
+        console.error("Failed to login using one tap by google:", error);
       }
     },
     onError: () => {
-      console.error('An error occurred during Google One Tap login.');
+      console.error("An error occurred during Google One Tap login.");
     },
   });
-  return (
-    <></>
-  );
+  return <></>;
 }

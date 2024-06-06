@@ -7,7 +7,8 @@ export type User = {
   email: string;
   password?: string;
   provider: string;
-}
+  visits: number;
+};
 
 export type Link = {
   id: string;
@@ -15,13 +16,15 @@ export type Link = {
   name: string;
   url: string;
   logo?: string;
-}
+  clicks: number;
+};
 
 export type Card = {
   id: string;
   user_id: string;
   title: string;
-  description: string;
+  description?: string;
   url: string;
   image?: string;
-}
+  clicks: number;
+};

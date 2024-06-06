@@ -1,8 +1,8 @@
-'use client';
-import { useState } from 'react';
+"use client";
+import { useState } from "react";
 import { AlignJustify, X } from "lucide-react";
-import Link from 'next/link';
-import { ModeToggle } from '@/components/theme-toggle';
+import Link from "next/link";
+import { ModeToggle } from "@/components/theme-toggle";
 
 export const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -41,7 +41,7 @@ export const Navbar = () => {
         </ul>
       </nav>
       <ul
-        className={`flex flex-col items-center space-y-2 py-4 ${open ? 'block' : 'hidden'} md:hidden absolute top-14 left-0 right-0 bg-white dark:bg-gray-950 px-6 border-b dark:border-gray-800`}
+        className={`flex flex-col items-center space-y-2 py-4 ${open ? "block" : "hidden"} md:hidden absolute top-14 left-0 right-0 bg-white dark:bg-gray-950 px-6 border-b dark:border-gray-800`}
       >
         <li className="w-full text-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition duration-300 font-medium text-lg text-gray-600 dark:text-white hover:text-sky-400">
           Home
