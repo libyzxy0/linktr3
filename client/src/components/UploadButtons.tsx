@@ -8,7 +8,7 @@ import { updateUser } from "@/app/actions";
 import { experimental_useFormState as useFormState } from "react-dom";
 
 export function ButtonProfilePic() {
-  const picture = useRef(null);
+  const picture = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [state, formAction] = useFormState(updateUser, {
     message: "",
@@ -22,7 +22,7 @@ export function ButtonProfilePic() {
   }, [state]);
 
   const handleFileChange = () => {
-    if (picture.current.files.length > 0) {
+    if (picture.current && picture.current.files.length > 0) {
       const formData = new FormData();
       formData.append("avatar", picture.current.files[0]);
       formAction(formData);
@@ -59,7 +59,7 @@ export function ButtonProfilePic() {
 }
 
 export function ButtonCoverPic() {
-  const picture = useRef(null);
+  const picture = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [state, formAction] = useFormState(updateUser, {
     message: "",
@@ -73,7 +73,7 @@ export function ButtonCoverPic() {
   }, [state]);
 
   const handleFileChange = () => {
-    if (picture.current.files.length > 0) {
+    if (picture.current && picture.current.files.length > 0) {
       const formData = new FormData();
       formData.append("cover", picture.current.files[0]);
       formAction(formData);
