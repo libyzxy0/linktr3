@@ -11,7 +11,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { experimental_useFormState as useFormState } from "react-dom";
 
 export function LinkCreateForm() {
-  const logo = useRef(null);
+  const logo = useRef<HTMLInputElement>(null);
   const [state, formAction] = useFormState(createLink, {
     message: "",
     error: false,
