@@ -8,6 +8,7 @@ export type User = {
   password?: string;
   provider: string;
   visits: number;
+  cover?: string;
 };
 
 export type Link = {
