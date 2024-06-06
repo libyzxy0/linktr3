@@ -67,9 +67,9 @@ const UserTabs: React.FC<UserTabsProps> = ({ links, cards, error }) => {
                 <Card
                   key={index}
                   title={card.title}
-                  description={card.description}
-                  preview={card.preview}
-                  image={card.image}
+                  description={card.description ? card.description : ""}
+                  preview={card.url ? card.url : ""}
+                  image={card.image ? card.image : "https://http.cat/404"}
                 />
               ))}
             </>
