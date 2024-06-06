@@ -6,6 +6,7 @@ import { ButtonBack } from "@/components/ButtonBack";
 import { SubmitButton } from "@/components/SubmitButton";
 import { createLink } from "@/app/actions";
 import toast, { Toaster } from "react-hot-toast";
+import { Upload } from "lucide-react";
 
 // @ts-ignore
 import { experimental_useFormState as useFormState } from "react-dom";
@@ -16,10 +17,15 @@ export function LinkCreateForm() {
     message: "",
     error: false,
   });
-  const [fileName, setFileName] = useState("Upload logo");
+  const [fileName, setFileName] = useState(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
+      if (!event.target.files[0].type.startsWith("image/")) {
+        toast.error("Images are only allowed to be upload");
+        logo.current.value = "";
+        return;
+      }
       setFileName(event.target.files[0].name);
     }
   };
@@ -60,12 +66,18 @@ export function LinkCreateForm() {
           onClick={() => logo.current?.click()}
           type="button"
           className={`w-full border-[1.5px] border-gray-200 dark:border-gray-800 rounded-lg py-2 font-medium mt-3 px-4 text-left ${
-            fileName !== "Upload logo"
+            fileName
               ? "text-gray-700 dark:text-white"
               : "text-gray-400 dark:text-gray-500"
           }`}
         >
-          {fileName}
+          {fileName ? (
+            fileName
+          ) : (
+            <div className="flex flex-row">
+              <Upload className="w-5 h-5 mr-2" /> Add logo 50x50
+            </div>
+          )}
         </button>
 
         <input
@@ -74,6 +86,7 @@ export function LinkCreateForm() {
           type="file"
           name="logo"
           className="hidden"
+          accept="image/*"
         />
 
         <SubmitButton className="mt-4 mb-1 py-2">Create</SubmitButton>

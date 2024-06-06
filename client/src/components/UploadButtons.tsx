@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import { Pencil, LoaderCircle } from "lucide-react";
 import { updateUser } from "@/app/actions";
+import toast, { Toaster } from "react-hot-toast";
 
 // @ts-ignore
 import { experimental_useFormState as useFormState } from "react-dom";
@@ -23,6 +24,11 @@ export function ButtonProfilePic() {
 
   const handleFileChange = () => {
     if (picture.current?.files && picture.current.files.length > 0) {
+      if (!picture.current.files[0].type.startsWith("image/")) {
+        toast.error("Images are only allowed to be upload");
+        picture.current.value = "";
+        return;
+      }
       const formData = new FormData();
       formData.append("avatar", picture.current.files[0]);
       formAction(formData);
@@ -53,7 +59,9 @@ export function ButtonProfilePic() {
         type="file"
         name="avatar"
         className="hidden"
+        accept="image/*"
       />
+      <Toaster position="top-right" reverseOrder={false} />
     </div>
   );
 }
@@ -74,6 +82,11 @@ export function ButtonCoverPic() {
 
   const handleFileChange = () => {
     if (picture.current?.files && picture.current.files.length > 0) {
+      if (!picture.current.files[0].type.startsWith("image/")) {
+        toast.error("Images are only allowed to be upload");
+        picture.current.value = "";
+        return;
+      }
       const formData = new FormData();
       formData.append("cover", picture.current.files[0]);
       formAction(formData);
@@ -109,7 +122,9 @@ export function ButtonCoverPic() {
         type="file"
         name="cover"
         className="hidden"
+        accept="image/*"
       />
+      <Toaster position="top-right" reverseOrder={false} />
     </div>
   );
 }
