@@ -49,7 +49,7 @@ const UserTabs: React.FC<UserTabsProps> = ({ links, cards, error }) => {
 
       {activeTab === "links" && (
         <div className="w-full px-8 flex flex-col mt-10 md:flex-row md:flex-wrap justify-center">
-          {links?.map((data, index) => (
+          {links && links.map((data, index) => (
             <ButtonLink key={index} logo={data?.logo} link={data.url}>
               {data.name}
             </ButtonLink>
