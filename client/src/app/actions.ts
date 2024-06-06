@@ -5,6 +5,7 @@ import { apiBase } from "@/constants";
 import { revalidatePath } from "next/cache";
 import { upload } from "@/utils/lib/cld";
 import { Buffer } from "buffer";
+import type { CloudinaryResponseType } from '@/types';
 
 export async function makeLogin(_currentData: any, formData: FormData) {
   try {
@@ -130,7 +131,7 @@ export async function updateUser(_currentData: any, formData: FormData) {
     if (cv) {
       const arrayBuffer = await cv.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
-      const cld = await upload(buffer);
+      const cld: CloudinaryResponseType = await upload(buffer);
       cover = cld?.secure_url;
     }
 
@@ -198,7 +199,7 @@ export async function createLink(_currentData: any, formData: FormData) {
     if (file) {
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
-      const cld: any = await upload(buffer);
+      const cld: CloudinaryResponseType = await upload(buffer);
       logo = cld?.secure_url;
     }
 

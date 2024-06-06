@@ -1,4 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
+import type { CloudinaryResponseType } from '@/types';
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -6,7 +7,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const upload = async (buffer: any) => {
+const upload = async (buffer: any): Promise<CloudinaryResponseType> => {
   const data = await new Promise((resolve, reject) => {
     cloudinary.uploader
       .upload_stream(
