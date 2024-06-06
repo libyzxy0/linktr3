@@ -225,7 +225,7 @@ export async function createLink(_currentData: any, formData: FormData) {
     };
 
     revalidatePath("/dashboard/links");
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
     return {
       error: true,
