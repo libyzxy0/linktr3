@@ -121,7 +121,7 @@ export async function updateUser(_currentData: any, formData: FormData) {
     if (av) {
       const arrayBuffer = await av.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
-      const cld = await upload(buffer);
+      const cld: any = await upload(buffer);
       avatar = cld.secure_url;
     }
 
@@ -131,7 +131,7 @@ export async function updateUser(_currentData: any, formData: FormData) {
       const arrayBuffer = await cv.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       const cld = await upload(buffer);
-      cover = cld.secure_url;
+      cover = cld?.secure_url;
     }
 
     const formDataEntries = {
@@ -198,8 +198,8 @@ export async function createLink(_currentData: any, formData: FormData) {
     if (file) {
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
-      const cld = await upload(buffer);
-      logo = cld.secure_url;
+      const cld: any = await upload(buffer);
+      logo = cld?.secure_url;
     }
 
     const requestBody: any = { name, url };
