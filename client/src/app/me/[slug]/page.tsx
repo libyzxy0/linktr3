@@ -7,6 +7,8 @@ import { Footer } from "@/components/Footer";
 import axios from "axios";
 import { apiBase } from "@/constants";
 import { Eye } from "lucide-react";
+import type { User, Link, Card } from '@/types';
+
 interface Props {
   params: {
     slug: string;
@@ -16,7 +18,7 @@ interface Props {
 const UserTree = async ({ params }: Props) => {
   const { slug } = params;
   let data;
-  let error;
+  let error = "";
   try {
     const response = await axios.post(apiBase + "/api/get-user", {
       username: slug,
@@ -92,7 +94,7 @@ const UserTree = async ({ params }: Props) => {
                 <UserTabs
                   links={data?.user.links}
                   cards={data?.user.cards}
-                  error={null}
+                  error={error}
                 />
               )}
             </div>
