@@ -8,8 +8,8 @@ import { ButtonLink } from "@/components/ButtonLink";
 import type { Link, Card as CardType } from "@/types";
 
 interface UserTabsProps {
-  links: Link | null;
-  cards: CardType | null;
+  links: Link[] | null;
+  cards: CardType[] | null;
   error: string | null;
 }
 
@@ -63,54 +63,15 @@ const UserTabs: React.FC<UserTabsProps> = ({ links, cards, error }) => {
             <p className="text-red-500">{error}</p>
           ) : (
             <>
-              <Card
-                title="Lorem Ipsum"
-                description="Lorem Ipsum dolor sit amet in den."
-                preview="https://example.com"
-                image="https://http.cat/404"
-              />
-              <Card
-                title="Lorem Ipsum"
-                description="Lorem Ipsum dolor sit amet in den."
-                preview="https://example.com"
-                image="https://http.cat/404"
-              />
-              <Card
-                title="Lorem Ipsum"
-                description="Lorem Ipsum dolor sit amet in den."
-                preview="https://example.com"
-                image="https://http.cat/404"
-              />
-              <Card
-                title="Lorem Ipsum"
-                description="Lorem Ipsum dolor sit amet in den."
-                preview="https://example.com"
-                image="https://http.cat/404"
-              />
-              <Card
-                title="Lorem Ipsum"
-                description="Lorem Ipsum dolor sit amet in den."
-                preview="https://example.com"
-                image="https://http.cat/404"
-              />
-              <Card
-                title="Lorem Ipsum"
-                description="Lorem Ipsum dolor sit amet in den."
-                preview="https://example.com"
-                image="https://http.cat/404"
-              />
-              <Card
-                title="Lorem Ipsum"
-                description="Lorem Ipsum dolor sit amet in den."
-                preview="https://example.com"
-                image="https://http.cat/404"
-              />
-              <Card
-                title="Lorem Ipsum"
-                description="Lorem Ipsum dolor sit amet in den."
-                preview="https://example.com"
-                image="https://http.cat/404"
-              />
+              {cards && cards.map((card, index) => (
+                <Card
+                  key={index}
+                  title={card.title}
+                  description={card.description}
+                  preview={card.preview}
+                  image={card.image}
+                />
+              ))}
             </>
           )}
         </div>
