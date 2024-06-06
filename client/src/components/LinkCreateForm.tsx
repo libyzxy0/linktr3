@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { ModeToggle } from "@/components/theme-toggle";
 import { ButtonBack } from "@/components/ButtonBack";
 import { SubmitButton } from "@/components/SubmitButton";
@@ -18,7 +18,7 @@ export function LinkCreateForm() {
   });
   const [fileName, setFileName] = useState("Upload logo");
 
-  const handleFileChange = (event) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       setFileName(event.target.files[0].name);
     }
