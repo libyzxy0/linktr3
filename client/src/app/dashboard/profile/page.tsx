@@ -62,7 +62,7 @@ export default async function EditProfile() {
                 className="rounded-full w-[7rem] h-[7rem] md:h-[12rem] md:w-[12rem] border-4 md:border-8 border-sky-300 absolute top-[-3.5rem] md:top-[-6rem] mx-8"
                 src={
                   user.avatar
-                    ? user.avatar.replace("s96-c", "s384-c", true)
+                    ? user.avatar.replace("s96-c", "s384-c")
                     : "https://http.cat/404"
                 }
                 width={100}
