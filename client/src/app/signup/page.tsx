@@ -27,7 +27,7 @@ const initialState = {
 export default function Signup() {
   const searchParams = useSearchParams();
   const suser = searchParams.get("create");
-  const [creusername, setCUser] = useState(suser);
+  const [creusername, setCUser] = useState(suser ? suser : "");
 
   const [state, formAction] = useFormState(createUser, initialState);
   const [show, setShow] = useState(false);
@@ -74,7 +74,7 @@ export default function Signup() {
               </label>
               <input
                 onChange={(e) => setCUser(e.target.value)}
-                value={creusername}
+                value={creusername ? creusername : ""}
                 name="username"
                 className="outline-none py-2 rounded-lg hover:border-sky-400 mt-2 border-[1.5px] border-gray-200 px-4 bg-white dark:bg-gray-800 dark:border-gray-700"
                 type="text"
