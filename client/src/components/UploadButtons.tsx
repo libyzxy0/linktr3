@@ -22,7 +22,7 @@ export function ButtonProfilePic() {
   }, [state]);
 
   const handleFileChange = () => {
-    if (picture.current && picture.current.files.length > 0) {
+    if (picture.current?.files && picture.current.files.length > 0) {
       const formData = new FormData();
       formData.append("avatar", picture.current.files[0]);
       formAction(formData);
@@ -73,7 +73,7 @@ export function ButtonCoverPic() {
   }, [state]);
 
   const handleFileChange = () => {
-    if (picture.current && picture.current.files.length > 0) {
+    if (picture.current?.files && picture.current.files.length > 0) {
       const formData = new FormData();
       formData.append("cover", picture.current.files[0]);
       formAction(formData);
