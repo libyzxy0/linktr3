@@ -22,8 +22,7 @@ export default async function Dashboard() {
     apiBase + "/api/get-session",
     {
       params: {
-        links: true,
-        cards: false
+        links: true
       },
       headers: {
         Authorization: `Bearer ${token?.value}`,
@@ -96,7 +95,7 @@ export default async function Dashboard() {
                 <h1 className="text-gray-700 dark:text-white font-medium">
                   Total Links
                 </h1>
-                <h1 className="text-gray-700 dark:text-white font-bold">{user?.links.length}</h1>
+                <h1 className="text-gray-700 dark:text-white font-bold">{user.links ? user.links.length : 0}</h1>
               </li>
               <li className="flex items-center justify-between">
                 <h1 className="text-gray-700 dark:text-white font-medium">
