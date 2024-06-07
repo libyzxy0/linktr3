@@ -41,7 +41,7 @@ export default function Signup() {
       } else {
         toast.success(state.message);
         setTimeout(() => {
-          router.push("/login");
+          router.push("/dashboard");
         }, 2000);
       }
     }

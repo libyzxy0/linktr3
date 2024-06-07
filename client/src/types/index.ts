@@ -11,6 +11,7 @@ export type User = {
   cover?: string;
   links?: Link[];
   cards?: Card[];
+  email_verified: boolean;
 };
 
 export type Link = {

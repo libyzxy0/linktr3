@@ -9,6 +9,7 @@ import Link from "next/link";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { DashboardButtons } from "@/components/DashboardButtons";
 import type { Metadata } from "next";
+import VerifyOtp from '@/components/VerifyOtp'
 
 export const metadata: Metadata = {
   title: "Linktr3 | Dashboard",
@@ -29,7 +30,11 @@ export default async function Dashboard() {
       },
     },
   );
-
+  
+  if (!user.email_verified) {
+    return <VerifyOtp user={user} />;
+  }
+  
   if (!user.username) {
     return <UpdateUsername user={user} />;
   }

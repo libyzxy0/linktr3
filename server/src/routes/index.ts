@@ -6,7 +6,8 @@ import {
   requestPlaceholder, 
   googleOAuth, 
   updateUser, 
-  getUserPublicProfile
+  getUserPublicProfile, 
+  verifyOtp
 } from '@/controllers/user.controller'
 import { 
   createLink, 
@@ -20,6 +21,7 @@ router.route('/register').post(register).get(requestPlaceholder);
 router.route('/login').post(login).get(requestPlaceholder);
 router.route('/update-user').post(updateUser).get(requestPlaceholder);
 router.route('/get-user').post(getUserPublicProfile).get(requestPlaceholder);
+router.route('/verify-otp').post(verifyOtp).get(requestPlaceholder);
 
 //Links actions
 router.route('/create-link').post(createLink).get(requestPlaceholder);

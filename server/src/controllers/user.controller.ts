@@ -2,10 +2,11 @@ import { Request, Response } from 'express';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
-import { users } from '@/db/schema';
+import { users, otps } from '@/db/schema';
 import { db } from '@/db';
 import { eq } from 'drizzle-orm';
 import { googleOAuthClient, UserRefreshClient } from '@/utils/lib/google-client';
+import { sendOtp } from '@/utils/mailer/sendOtp';
 
 const salt = bcryptjs.genSaltSync(10);
 
@@ -28,8 +29,23 @@ export const register = async (req: Request, res: Response) => {
     }
     
    const hashedPassword = await bcryptjs.hash(password, salt);
-    const data = await db.insert(users).values({ name, username, bio, email, avatar, password: hashedPassword, provider: 'email', visits: 0, cover: ''});
-    res.json({ success: true, message: 'Successfully created account' })
+    const data = await db.insert(users).values({ name, username, bio, email, avatar, password: hashedPassword, provider: 'email', visits: 0, cover: '', email_verified: false }).returning({ insertedId: users.id });
+    
+    const token = jwt.sign({ id: data[0].insertedId, email: email }, process.env.JWT_SECRET_KEY!, { expiresIn: '7d' });
+    
+    const otp_code = Math.floor(100000 + Math.random() * 900000);
+    
+    // Send otp inti user email
+    await sendOtp({
+      name, 
+      email, 
+      otp: otp_code
+    })
+    
+    //Write otp code into database
+    await db.insert(otps).values({ email, code: otp_code });
+    
+    res.json({ success: true, message: 'Successfully created account', jwt_token: token })
   } catch (error: any) {
     console.log("Account creation error:", error);
     res.status(400).json({ success: false, message: 'Failed to create account' })
@@ -122,7 +138,7 @@ export const googleOAuth = async (req: Request, res: Response) => {
     
     /* Check if there's user */
     if(user.length == 0) {
-      const data = await db.insert(users).values({ name, username: null, bio: "", email, avatar: picture, password: null, provider: 'google',  visits: 0, cover: '' }).returning({ insertedId: users.id });
+      const data = await db.insert(users).values({ name, username: null, bio: "", email, avatar: picture, password: null, provider: 'google',  visits: 0, cover: '',  email_verified: true }).returning({ insertedId: users.id });
       
       const token = jwt.sign({ id: data[0].insertedId, email }, process.env.JWT_SECRET_KEY!, { expiresIn: '7d' });
       res.json({ success: true, token, message: 'Signed in successfully [10283]' });
@@ -209,4 +225,52 @@ export const getUserPublicProfile = async (req: Request, res: Response) => {
 
 export const requestPlaceholder = (_req: Request, res: Response) => {
   res.status(400).json({ message: 'Cannot GET, perform a POST request instead' })
+}
+
+export const verifyOtp = async (req: Request, res: Response) => {
+  try {
+    const { email, otp } = req.body;
+    console.log(req.body)
+    if(req.body.f == 'verify') {
+      const listOtps = await db.select().from(otps);
+      const resu = listOtps.find((u) => u.email == email);
+      console.log(resu)
+      if(!resu) {
+        res.status(404).send({ success: false, message: 'Otp not found on database' })
+        return;
+      }
+      
+      if(resu.code === parseInt(otp)) {
+        await db.update(users).set({ email_verified: true }).where(eq(users.email, resu.email));
+        res.send({ success: true, message:"Otp verified successfully" })
+      } else {
+        res.status(401).send({ success: false, message: 'Incorrect OTP, double check your otp'})
+      }
+      
+    } else if (req.body.f == 'regenerate') {
+      const listOtps = await db.select().from(otps);
+      
+      const resu = listOtps.find((u) => u.email == email);
+      const otp_code = Math.floor(100000 + Math.random() * 900000);
+
+        // Send otp into user email
+        await sendOtp({
+          name: email,
+          email,
+          otp: otp_code
+        });
+
+        if (resu) {
+          await db.update(otps).set({ code: otp_code }).where(eq(otps.email, email));
+        } else {
+          await db.insert(otps).values({ email, code: otp_code });
+        }
+        res.send({ success: true, message: "OTP sent to your email" });
+    } else {
+      res.send({ success: false, message: 'Invalid method' })
+    }
+  } catch (error) {
+    console.log('Error verifying otp:', error);
+    res.status(400).json({ success: false, message: 'OTP not valid, type it correctly' })
+  }
 }

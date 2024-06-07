@@ -54,6 +54,14 @@ export async function createUser(_currentData: any, formData: FormData) {
       },
       { headers: { "Content-Type": "application/json" } },
     );
+    if(data.success) {
+      cookies().set({
+        name: "authtoken",
+        value: data.jwt_token,
+        httpOnly: true,
+        path: "/",
+    });
+    }
     return {
       error: false,
       message: data.message,
@@ -95,6 +103,58 @@ export async function updateUsername(_currentData: any, formData: FormData) {
     }
   } catch (error: any) {
     console.error("Failed to create your account:", error);
+    return {
+      error: true,
+      message: error.response ? error.response.data.message : error.message,
+    };
+  }
+}
+export async function verifyOtp(_currentData: any, formData: FormData) {
+  try {
+    const otp = formData.get('otp');
+    if(!otp) {
+      return {
+        error: true,
+        message: "Please enter otp",
+      };
+    }
+    const { data } = await axios.post(apiBase + '/api/verify-otp', {
+      email: formData.get('email'), 
+      otp, 
+      f: 'verify'
+    })
+    if(data.success) {
+      revalidatePath("/dashboard");
+    } else {
+      return {
+        error: true,
+        message: data.message,
+      };
+    }
+  } catch (error: any) {
+    console.error("Failed to verify your otp:", error);
+    return {
+      error: true,
+      message: error.response ? error.response.data.message : error.message,
+    };
+  }
+}
+export async function generateOtp(_currentData: any, formData: FormData) {
+  try {
+    const { data } = await axios.post(apiBase + '/api/verify-otp', {
+      email: formData.get('email'), 
+      f: 'regenerate'
+    })
+    if(data.success) {
+      revalidatePath("/dashboard");
+    } else {
+      return {
+        error: true,
+        message: data.message,
+      };
+    }
+  } catch (error: any) {
+    console.error("Failed to regenerate your otp:", error);
     return {
       error: true,
       message: error.response ? error.response.data.message : error.message,

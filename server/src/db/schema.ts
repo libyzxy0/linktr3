@@ -1,4 +1,4 @@
-import { pgTable, varchar, uuid, integer } from 'drizzle-orm/pg-core';
+import { pgTable, varchar, uuid, integer, boolean, timestamp } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm'
 
 export const users = pgTable('users', {
@@ -11,7 +11,8 @@ export const users = pgTable('users', {
   password: varchar('password'), 
   provider: varchar('provider').notNull(), 
   visits: integer('visits').notNull(), 
-  cover: varchar('cover')
+  cover: varchar('cover'), 
+  email_verified: boolean('email_verified')
 });
 
 export const links = pgTable('links', {
@@ -51,3 +52,10 @@ export const usersRelations = relations(users, ({ many }) => ({
   links: many(links),
   cards: many(cards)
 }));
+
+export const otps = pgTable('otp', {
+  id: uuid('id').primaryKey().notNull(),
+  email: varchar('email').notNull(),
+  code: integer('code').notNull(), 
+  created_at: timestamp('created_at').notNull(), 
+});
