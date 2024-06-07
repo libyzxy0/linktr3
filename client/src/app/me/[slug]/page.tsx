@@ -7,7 +7,7 @@ import { Footer } from "@/components/Footer";
 import axios from "axios";
 import { apiBase } from "@/constants";
 import { Eye } from "lucide-react";
-import type { User, Link, Card } from '@/types';
+import type { User, Link, Card } from "@/types";
 
 interface Props {
   params: {
@@ -24,7 +24,6 @@ const UserTree = async ({ params }: Props) => {
       username: slug,
     });
     data = response.data;
-    console.log(response.data);
   } catch (err: any) {
     console.log(err);
     error = err;

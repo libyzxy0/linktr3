@@ -67,14 +67,24 @@ export const login = async (req: Request, res: Response) => {
 export const getSession = async (req: Request, res: Response) => {
   try {
     const token = ((req.headers['authorization'])?.split('Bearer ')).join("");
-    const info = jwt.verify(token, process.env.JWT_SECRET_KEY!);
-    const result = await db.select().from(users).where(eq(users.id, info.id));
     
-    if(!result) {
+    const q = req.query;
+    
+    const info = jwt.verify(token, process.env.JWT_SECRET_KEY!);
+    const user = await db.query.users.findFirst({
+      where: ((users, { eq }) => eq(users.id, info.id)),
+      with: {
+        links: req.query.links === 'true', 
+        cards: req.query.cards === 'true', 
+      }
+    });
+    
+    if(!user) {
       res.status(401).json({ success: false, message: 'Unauthorized access' })
     }
-    res.send(result[0]);
+    res.send(user);
   } catch (error: any) {
+    console.log('Error verifying user:', error)
     res.status(401).json({ success: false, message: 'Unauthorized access' })
   }
 }

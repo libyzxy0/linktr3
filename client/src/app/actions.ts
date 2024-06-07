@@ -5,7 +5,7 @@ import { apiBase } from "@/constants";
 import { revalidatePath } from "next/cache";
 import { upload } from "@/utils/lib/cld";
 import { Buffer } from "buffer";
-import type { CloudinaryResponseType } from '@/types';
+import type { CloudinaryResponseType } from "@/types";
 
 export async function makeLogin(_currentData: any, formData: FormData) {
   try {
@@ -113,7 +113,6 @@ export async function updateUser(_currentData: any, formData: FormData) {
         message: "No authtoken provided",
       };
     }
-    console.log("Updating user:", formData);
     let avatar;
     let cover;
 
@@ -122,8 +121,8 @@ export async function updateUser(_currentData: any, formData: FormData) {
     if (av) {
       const arrayBuffer = await av.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
-      const cld: any = await upload(buffer);
-      avatar = cld.secure_url;
+      const cld: CloudinaryResponseType = await upload(buffer);
+      avatar = cld?.secure_url;
     }
 
     const cv = formData.get("cover") as unknown as File;
@@ -147,7 +146,6 @@ export async function updateUser(_currentData: any, formData: FormData) {
     const requestData = Object.fromEntries(
       Object.entries(formDataEntries).filter(([_, v]) => v),
     );
-    console.log("Update user:", requestData);
     const { data } = await axios.post(
       apiBase + "/api/update-user",
       requestData,
@@ -190,8 +188,6 @@ export async function createLink(_currentData: any, formData: FormData) {
       };
     }
 
-    const name = formData.get("name");
-    const url = formData.get("url");
     let logo;
 
     const file = formData.get("logo") as unknown as File;
@@ -203,15 +199,23 @@ export async function createLink(_currentData: any, formData: FormData) {
       logo = cld?.secure_url;
     }
 
-    const requestBody: any = { name, url };
-    if (logo) {
-      requestBody.logo = logo;
-    }
-    console.log("Requesting", requestBody);
+    type RequestType = {
+      name: string;
+      url: string;
+      logo?: string;
+    };
+
+    const requestBody = {
+      name: formData.get("name"),
+      url: formData.get("url"),
+      logo,
+    };
+
+    const requestData = Object.fromEntries(Object.entries(requestBody).filter(([_, v]) => v));
 
     const { data } = await axios.post(
       apiBase + "/api/create-link",
-      requestBody,
+      requestData,
       {
         headers: {
           Authorization: `Bearer ${token?.value}`,
@@ -219,12 +223,11 @@ export async function createLink(_currentData: any, formData: FormData) {
         },
       },
     );
+    revalidatePath("/dashboard/links");
     return {
       error: false,
       message: "Link created successfully",
     };
-
-    revalidatePath("/dashboard/links");
   } catch (error: any) {
     console.log(error);
     return {

@@ -1,4 +1,8 @@
-import { v2 as cloudinary, UploadApiResponse, UploadApiErrorResponse } from "cloudinary";
+import {
+  v2 as cloudinary,
+  UploadApiResponse,
+  UploadApiErrorResponse,
+} from "cloudinary";
 
 // Configure Cloudinary
 cloudinary.config({
@@ -15,7 +19,10 @@ const upload = async (buffer: Buffer) => {
         tags: ["ml_default"],
         upload_preset: "ml_default",
       },
-      (error: UploadApiErrorResponse | undefined, result: UploadApiResponse | undefined) => {
+      (
+        error: UploadApiErrorResponse | undefined,
+        result: UploadApiResponse | undefined,
+      ) => {
         if (error) {
           reject(error);
           return;
@@ -25,7 +32,7 @@ const upload = async (buffer: Buffer) => {
           return;
         }
         resolve(result);
-      }
+      },
     );
 
     uploadStream.end(buffer);

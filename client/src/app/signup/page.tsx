@@ -115,7 +115,7 @@ export default function Signup() {
             </div>
 
             <div className="flex flex-col mx-8 mt-5">
-              <SubmitButton>Sign In</SubmitButton>
+              <SubmitButton>Create Account</SubmitButton>
             </div>
           </form>
           <h1 className="text-center mt-6 text-gray-600 dark:text-white">

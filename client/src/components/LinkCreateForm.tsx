@@ -44,7 +44,7 @@ export function LinkCreateForm() {
     <>
       <form
         action={formAction}
-        className="shadow bg-white dark:bg-gray-900 w-full p-5 rounded-md flex flex-col justify-center"
+        className="bg-white dark:bg-gray-950 w-full p-5 rounded-md flex flex-col justify-center border dark:border-gray-800 shadow-sm"
       >
         <h1 className="text-gray-700 dark:text-white font-medium text-xl mb-3">
           Create New
@@ -52,13 +52,13 @@ export function LinkCreateForm() {
         <input
           name="name"
           type="text"
-          className="w-full px-4 py-2 rounded-lg border-[1.5px] border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 focus:outline-none dark:placeholder-gray-500"
+          className="w-full px-4 py-2 rounded-lg border-[1.5px] border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 focus:outline-none dark:placeholder-gray-500"
           placeholder="Enter name for this link"
         />
         <input
           name="url"
           type="url"
-          className="mt-3 w-full px-4 py-2 rounded-lg border-[1.5px] border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 focus:outline-none dark:placeholder-gray-500"
+          className="mt-3 w-full px-4 py-2 rounded-lg border-[1.5px] border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 focus:outline-none dark:placeholder-gray-500"
           placeholder="https://github.com/libyzxy0"
         />
 

@@ -52,4 +52,3 @@ export type CloudinaryResponseType = {
   original_filename: string;
   api_key: number;
 };
-

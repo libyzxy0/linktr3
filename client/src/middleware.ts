@@ -31,6 +31,7 @@ export async function middleware(request: NextRequest) {
           return NextResponse.redirect(new URL("/dashboard", request.url));
         }
       } catch (error: any) {
+        console.log(error);
         return NextResponse.next();
       }
     } else {
@@ -63,6 +64,7 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL("/login", request.url));
       }
     } catch (error: any) {
+      console.log(error)
       return NextResponse.redirect(new URL("/login", request.url));
     }
   }

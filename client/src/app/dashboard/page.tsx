@@ -21,6 +21,10 @@ export default async function Dashboard() {
   const { data: user }: { data: User } = await axios.get(
     apiBase + "/api/get-session",
     {
+      params: {
+        links: true,
+        cards: false
+      },
       headers: {
         Authorization: `Bearer ${token?.value}`,
       },
@@ -85,20 +89,20 @@ export default async function Dashboard() {
                   Total Clicks
                 </h1>
                 <h1 className="text-gray-700 dark:text-white font-bold">
-                  28,387
+                  0
                 </h1>
               </li>
               <li className="flex items-center justify-between">
                 <h1 className="text-gray-700 dark:text-white font-medium">
                   Total Links
                 </h1>
-                <h1 className="text-gray-700 dark:text-white font-bold">9</h1>
+                <h1 className="text-gray-700 dark:text-white font-bold">{user?.links.length}</h1>
               </li>
               <li className="flex items-center justify-between">
                 <h1 className="text-gray-700 dark:text-white font-medium">
                   Total Cards
                 </h1>
-                <h1 className="text-gray-700 dark:text-white font-bold">6</h1>
+                <h1 className="text-gray-700 dark:text-white font-bold">0</h1>
               </li>
             </ul>
 

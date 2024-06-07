@@ -14,14 +14,9 @@ export const users = pgTable('users', {
   cover: varchar('cover')
 });
 
-export const usersRelations = relations(users, ({ many }) => ({
-  links: many(links),
-  cards: many(cards)
-}));
-
 export const links = pgTable('links', {
   id: uuid('id').primaryKey().notNull(),
-  user_id: uuid('user_id').references(() => users.id).notNull(),
+  user_id: uuid('user_id').notNull().references(() => users.id),
   name: varchar('name').notNull(),
   logo: varchar('logo'),  
   url: varchar('url').notNull(), 
@@ -29,7 +24,7 @@ export const links = pgTable('links', {
 });
 
 export const linksRelations = relations(links, ({ one }) => ({
-  author: one(users, {
+  user_id: one(users, {
     fields: [links.user_id],
     references: [users.id],
   }),
@@ -37,7 +32,7 @@ export const linksRelations = relations(links, ({ one }) => ({
 
 export const cards = pgTable('cards', {
   id: uuid('id').primaryKey().notNull(),
-  user_id: uuid('user_id').references(() => users.id).notNull(),
+  user_id: uuid('user_id').notNull().references(() => users.id),
   title: varchar('title').notNull(),
   description: varchar('description').notNull(), 
   image: varchar('image').notNull(), 
@@ -46,8 +41,13 @@ export const cards = pgTable('cards', {
 });
 
 export const cardsRelations = relations(links, ({ one }) => ({
-  author: one(users, {
+  user_id: one(users, {
     fields: [cards.user_id],
     references: [users.id],
   }),
+}));
+
+export const usersRelations = relations(users, ({ many }) => ({
+  links: many(links),
+  cards: many(cards)
 }));

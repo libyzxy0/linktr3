@@ -3,7 +3,7 @@ import React from "react";
 import axios from "axios";
 import { apiBase } from "@/constants";
 import { cookies } from "next/headers";
-import type { User } from '@/types';
+import type { User } from "@/types";
 
 export async function generateMetadata(
   {},
