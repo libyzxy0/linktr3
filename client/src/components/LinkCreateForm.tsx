@@ -23,7 +23,9 @@ export function LinkCreateForm() {
     if (event.target.files && event.target.files[0]) {
       if (!event.target.files[0].type.startsWith("image/")) {
         toast.error("Images are only allowed to be upload");
-        logo.current.value = "";
+        if(logo.current) {
+          logo.current.value = "";
+        }
         return;
       }
       setFileName(event.target.files[0].name);
