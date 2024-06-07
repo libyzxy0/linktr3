@@ -24,7 +24,7 @@ export default async function Links() {
       },
     },
   );
-  let links = user?.links.reverse();
+  let links = user.links ? user.links.reverse() : [];
   return (
     <>
       <div className="flex flex-col min-h-screen bg-white dark:bg-gray-950">
