@@ -38,7 +38,7 @@ export default function VerifyOtp({ user }: { user: User }) {
               Verify your <b className="text-sky-400">OTP</b>
             </h1>
             <p className="mt-3 text-gray-600 dark:text-gray-300 dark:text-gray-600">
-              Hello <b className="text-sky-400">{user.email}</b> we've send otp to your email, please enter otp here
+              Hello <b className="text-sky-400">{user.email}</b>{" we've send otp to your email, please enter otp here"}
             </p>
             <form action={formAction}>
               <input type="email" name="email" className="hidden" value={user.email} />
