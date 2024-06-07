@@ -49,11 +49,19 @@ const UserTabs: React.FC<UserTabsProps> = ({ links, cards, error }) => {
 
       {activeTab === "links" && (
         <div className="w-full px-8 flex flex-col mt-10 md:flex-row md:flex-wrap justify-center">
-          {links && links.map((data, index) => (
-            <ButtonLink key={index} logo={data?.logo} link={data.url}>
-              {data.name}
-            </ButtonLink>
-          ))}
+          {links && links.length > 0 ? (
+            links.map((data, index) => (
+              <ButtonLink key={index} logo={data?.logo} link={data.url}>
+                {data.name}
+              </ButtonLink>
+            ))
+          ) : (
+          <div className="flex flex-col items-center text-gray-300 mt-5 dark:text-gray-600">
+            <Network strokeWidth={1.8} className="w-28 h-28" />
+            <h1 className="text-gray-300 dark:text-gray-600 text-xl mt-3">There's no links yet.
+            </h1>
+          </div>
+          )}
         </div>
       )}
 
@@ -63,15 +71,24 @@ const UserTabs: React.FC<UserTabsProps> = ({ links, cards, error }) => {
             <p className="text-red-500">{error}</p>
           ) : (
             <>
-              {cards && cards.map((card, index) => (
-                <Card
-                  key={index}
-                  title={card.title}
-                  description={card.description ? card.description : ""}
-                  preview={card.url ? card.url : ""}
-                  image={card.image ? card.image : "https://http.cat/404"}
-                />
-              ))}
+              {cards && cards.length > 0 ? (
+                cards.map((card, index) => (
+                  <Card
+                    key={index}
+                    title={card.title}
+                    description={card.description ? card.description : ""}
+                    preview={card.url ? card.url : ""}
+                    image={card.image ? card.image : "https://http.cat/404"}
+                  />
+                ))
+              ) : (
+                <div className="flex flex-col items-center text-gray-300 mt-5 dark:text-gray-600">
+                  <Blocks strokeWidth={1.8} className="w-28 h-28" />
+                  <h1 className="text-gray-300 dark:text-gray-600 text-xl mt-3">
+                    There's no cards yet.
+                  </h1>
+                </div>
+              )}
             </>
           )}
         </div>
