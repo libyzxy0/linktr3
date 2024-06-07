@@ -17,7 +17,7 @@ export function LinkCreateForm() {
     message: "",
     error: false,
   });
-  const [fileName, setFileName] = useState(null);
+  const [fileName, setFileName] = useState("");
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
