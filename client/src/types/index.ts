@@ -9,6 +9,8 @@ export type User = {
   provider: string;
   visits: number;
   cover?: string;
+  links?: Link[];
+  cards?: Card[];
 };
 
 export type Link = {
