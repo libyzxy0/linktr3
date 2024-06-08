@@ -6,6 +6,7 @@ import { SubmitButton } from "@/components/SubmitButton";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import Cookies from "js-cookie";
+import { LoaderCircle } from "lucide-react";
 
 // @ts-ignore
 import { experimental_useFormState as useFormState } from "react-dom";
@@ -29,8 +30,8 @@ export default function VerifyOtp({ user }: { user: User }) {
       const formData = new FormData();
       formData.append("email", user.email);
       formVAction(formData);
-      const expireTime = new Date().getTime() + 180000; // 3 minutes in milliseconds
-      Cookies.set("otp-timer", expireTime.toString(), { expires: 1 }); // Expires in 1 day to handle edge cases
+      const expireTime = new Date().getTime() + 180000;
+      Cookies.set("otp-timer", expireTime.toString(), { expires: 1 });
       setTimeLeft(180);
     }
   };
@@ -40,7 +41,7 @@ export default function VerifyOtp({ user }: { user: User }) {
     if (savedExpireTime) {
       const timeLeft = Math.max(
         0,
-        Math.floor((parseInt(savedExpireTime) - new Date().getTime()) / 1000),
+        Math.floor((parseInt(savedExpireTime) - new Date().getTime()) / 1000)
       );
       setTimeLeft(timeLeft);
       setCookieLoading(false);
@@ -53,7 +54,7 @@ export default function VerifyOtp({ user }: { user: User }) {
     if (timeLeft !== null && timeLeft > 0) {
       const interval = setInterval(() => {
         setTimeLeft((prevTime) => {
-          const newTime = prevTime - 1;
+          const newTime = (prevTime ?? 1) - 1;
           if (newTime <= 0) {
             clearInterval(interval);
             Cookies.remove("otp-timer");
@@ -84,10 +85,6 @@ export default function VerifyOtp({ user }: { user: User }) {
       }
     }
   }, [stateV]);
-
-  if (cookieLoading) {
-    return null; // Don't display anything while cookie is loading
-  }
 
   const minutes = Math.floor(timeLeft ? timeLeft / 60 : 0);
   const seconds = timeLeft ? timeLeft % 60 : 0;
@@ -131,19 +128,22 @@ export default function VerifyOtp({ user }: { user: User }) {
                   onClick={handleOtpResend}
                   className={`font-medium mt-2 text-right hover:underline cursor-pointer ${timeLeft > 0 ? "pointer-events-none text-gray-500 dark:text-gray-300" : "text-sky-400"}`}
                 >
-                  {timeLeft > 0
-                    ? minutes > 0
-                      ? `Resend after ${minutes}:${seconds.toString().padStart(2, "0")}m`
-                      : `${seconds}s`
-                    : "Resend OTP"}
+                  {cookieLoading ? (
+                    <LoaderCircle className="w-4 h-4 inline ml-2 animate-spin" />
+                  ) : (
+                    timeLeft > 0
+                      ? minutes > 0
+                        ? `Resend after ${minutes}:${seconds.toString().padStart(2, "0")}m`
+                        : `${seconds}s`
+                      : "Resend OTP"
+                  )}
                 </h1>
               )}
               <SubmitButton className="mt-4">Verify OTP</SubmitButton>
             </form>
 
             <p className="text-center text-gray-700 dark:text-gray-200 mt-20">
-              This will redirect you to Dashboard page if you entered the OTP
-              correctly
+              This will redirect you to the Dashboard page if you entered the OTP correctly
             </p>
           </div>
         </div>
