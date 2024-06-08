@@ -183,9 +183,6 @@ export const googleOAuth = async (req: Request, res: Response) => {
     /* This code isn't a final yet, because google email can change at any time, i will change it soon into google id */
     const user = await db.select().from(users).where(eq(users.email, email));
     
-    /* Generate a JWT */
-    const token = jwt.sign({ id: data[0].insertedId, email }, process.env.JWT_SECRET_KEY!, { expiresIn: '7d' });
-    
     /* Check if there's user */
     if(user.length == 0) {
       
@@ -202,9 +199,14 @@ export const googleOAuth = async (req: Request, res: Response) => {
         cover: '',  
         email_verified: true
       }).returning({ insertedId: users.id });
+      /* Generate a JWT */
+      const token = jwt.sign({ id: data[0].insertedId, email }, process.env.JWT_SECRET_KEY!, { expiresIn: '7d' });
       
       res.json({ success: true, token, message: 'Signed in successfully [10283]' });
     } else {
+      /* Generate a JWT */
+      const token = jwt.sign({ id: user[0].id, email }, process.env.JWT_SECRET_KEY!, { expiresIn: '7d' });
+      
       res.json({ success: true, token, message: 'Signed in successfully [10282]' })
     }
     
