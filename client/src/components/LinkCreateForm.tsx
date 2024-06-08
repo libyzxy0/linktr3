@@ -33,7 +33,7 @@ export function LinkCreateForm() {
   };
 
   useEffect(() => {
-    if (state.message) {
+    if (state?.message) {
       if (state.error) {
         toast.error(state.message);
       } else {
