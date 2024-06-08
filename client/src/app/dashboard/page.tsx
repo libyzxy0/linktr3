@@ -48,7 +48,7 @@ export default async function Dashboard() {
           </h1>
           <div className="flex flex-row items-center space-x-3 mx-4">
             <ModeToggle />
-            {user && <ProfileAvatar avatar={user.avatar} name={user.name} />}
+            {user && <ProfileAvatar avatar={user.avatar} name={user.name} user_id={user.id} />}
           </div>
         </nav>
 
