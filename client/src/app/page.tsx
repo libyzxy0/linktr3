@@ -1,156 +1,60 @@
 "use client";
 
-import type { User } from "@/types";
-import { verifyOtp, generateOtp } from "@/app/actions";
-import { SubmitButton } from "@/components/SubmitButton";
+import { useState } from "react";
+import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { useEffect, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
-import Cookies from "js-cookie";
-
-// @ts-ignore
-import { experimental_useFormState as useFormState } from "react-dom";
-
-export default function VerifyOtp({ user }: { user: User }) {
-  const [state, formAction] = useFormState(verifyOtp, {
-    message: "",
-    error: false,
-  });
-  const [stateV, formVAction] = useFormState(generateOtp, {
-    message: "",
-    error: false,
-  });
-
-  const [timeLeft, setTimeLeft] = useState<number>(0); 
-  const [otp, setOtp] = useState<string>("")
-  const [cookieLoading, setCookieLoading] = useState<boolean>(true);
-
-  const handleOtpResend = () => {
-    if (timeLeft <= 0) {
-      const formData = new FormData();
-      formData.append("email", user.email);
-      formVAction(formData);
-      const expireTime = new Date().getTime() + 180000;
-      Cookies.set("otp-timer", expireTime.toString(), { expires: 1 });
-      setTimeLeft(180);
-    }
-  };
-
-  useEffect(() => {
-    const savedExpireTime = Cookies.get("otp-timer");
-    if (savedExpireTime) {
-      const timeLeft = Math.max(
-        0,
-        Math.floor((parseInt(savedExpireTime) - new Date().getTime()) / 1000),
-      );
-      setTimeLeft(timeLeft);
-      setCookieLoading(false);
-    } else {
-      setCookieLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (timeLeft > 0) { // No need to check for null
-      const interval = setInterval(() => {
-        setTimeLeft((prevTime) => {
-          const newTime = prevTime - 1;
-          if (newTime <= 0) {
-            clearInterval(interval);
-            Cookies.remove("otp-timer");
-          }
-          return Math.max(newTime, 0);
-        });
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [timeLeft]);
-
-  useEffect(() => {
-    if (state?.message) {
-      if (state.error) {
-        toast.error(state.message);
-      } else {
-        toast.success(state.message);
-      }
-    }
-  }, [state]);
-
-  useEffect(() => {
-    if (stateV?.message) {
-      if (stateV.error) {
-        toast.error(stateV.message);
-      } else {
-        toast.success(stateV.message);
-      }
-    }
-  }, [stateV]);
-
-  const minutes = Math.floor(timeLeft / 60); 
-  const seconds = timeLeft % 60;
-
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import mockup from "@/assets/images/landing_mockup.svg";
+import { OneTapGoogleLogin } from "@/components/OneTapGoogleLogin";
+export default function Landing() {
+  const router = useRouter();
+  const [username, setUsername] = useState("");
   return (
-    <div className="h-screen bg-white dark:bg-gray-950">
-      <main className="flex justify-center items-center h-[80vh]">
-        <div className="mt-10 text-center flex justify-center flex-col mx-6">
-          <h1 className="text-gray-700 text-3xl font-bold dark:text-white">
-            <b className="text-sky-400">Link</b>tr3🌲
-          </h1>
-          <h1 className="mt-12 text-gray-700 dark:text-white font-bold text-[26px]">
-            Verify your <b className="text-sky-400">OTP</b>
-          </h1>
-          <p className="mt-3 text-gray-600 dark:text-gray-300">
-            Hello <b className="text-sky-400">{user.email}</b>
-            {" we've sent an OTP to your email, please enter the OTP here"}
-          </p>
-          <form className="flex flex-col" onSubmit={formAction}>
-            <input
-              type="email"
-              name="email"
-              className="hidden"
-              value={user.email}
-            />
-            <input
-              name="otp"
-              value={otp}
-              onChange={(e) =>
-                e.target.value.length <= 6 ? setOtp(e.target.value) : null
-              }
-              className="outline-none py-2.5 rounded-lg hover:border-sky-400 mt-7 w-full border-[1.5px] border-gray-200 px-4 bg-white dark:bg-gray-800 dark:border-gray-700"
-              type="number"
-              placeholder="Enter your OTP"
-            />
-            {timeLeft > 0 ? (
-              <h1
-                onClick={handleOtpResend}
-                className={`font-medium mt-2 text-right hover:underline cursor-pointer ${timeLeft > 0 ? "text-gray-500 dark:text-gray-300" : "text-sky-400"}`}
-              >
-                {minutes > 0
-                  ? `Resend after ${minutes}:${seconds
-                      .toString()
-                      .padStart(2, "0")}m`
-                  : `${seconds}s`}
-              </h1>
-            ) : (
+    <>
+      <OneTapGoogleLogin />
+      <main className="w-full dark:bg-gray-950 h-screen flex flex-col justify-between">
+        <Navbar />
+        <div className="flex flex-col md:flex-row items-center justify-between h-full px-6 md:px-10">
+          <div className="w-full md:w-1/2 pt-24">
+            <h1 className="text-4xl text-transparent bg-clip-text bg-gradient-to-r from-sky-300 to-blue-400 font-bold">
+              Linktr3: Share your links with everyone.
+            </h1>
+            <p className="text-gray-700 text-md mt-5 dark:text-gray-50">
+              Linktr3 is the perfect platform to consolidate and share all your
+              important links in one customizable page. Ideal for content
+              creators, entrepreneurs, and influencers, Linktr3 makes it easy to
+              guide your audience to your social media, websites, and online
+              stores—all from a single, sleek interface.
+            </p>
+            <div className="mt-12 flex items-center">
+              <input
+                onChange={(e) => setUsername(e.target.value)}
+                value={username}
+                className="bg-white dark:bg-gray-950 max-w-[12rem] px-4 py-2 rounded-tl-full rounded-bl-full border-[1.5px] focus:border-sky-400 border-gray-200 dark:focus:border-sky-400 dark:border-gray-800 outline-none"
+                type="text"
+                placeholder="Enter username"
+                aria-label="Enter desired username"
+              />
               <button
-                onClick={handleOtpResend}
-                className="font-medium mt-2 text-right hover:underline cursor-pointer text-sky-400"
-                type="button"
+                onClick={() => router.push(`/signup?create=${username}`)}
+                className="px-4 py-2 bg-sky-400 text-white border-[1.5px] border-l-0 border-sky-400 rounded-tr-full rounded-br-full hover:bg-sky-400 transition-all duration-300 font-medium"
+                aria-label="Create Link"
               >
-                Resend OTP
+                Create
               </button>
-            )}
-            <SubmitButton className="mt-4">Verify OTP</SubmitButton>
-          </form>
-
-          <p className="text-center text-gray-700 dark:text-gray-200 mt-20">
-            This will redirect you to Dashboard page if you entered the OTP
-            correctly
-          </p>
+            </div>
+          </div>
+          <div className="hidden md:flex w-full md:w-1/2 justify-center">
+            <Image
+              className="w-auto max-w-full h-auto mt-10 md:mt-20"
+              src={mockup}
+              alt="Landing page mockup"
+            />
+          </div>
         </div>
+        <Footer />
       </main>
-      <Footer />
-      <Toaster position="top-right" reverseOrder={false} />
-    </div>
+    </>
   );
 }
