@@ -166,7 +166,12 @@ export async function createLink(_currentData: any, formData: FormData) {
   try {
     const token = getAuthToken();
     if (!token) return { error: true, message: "Session not found" };
-
+    const name = formData.get('name');
+    const url = formData.get("url");
+    
+    if (!name) return { error: true, message: "Please specify a name to your link" };
+    if (!url) return { error: true, message: "Please specify a url to your link" };
+    
     const logoPromise = formData.get("logo")
       ? uploadFile(formData.get("logo") as File)
       : undefined;
@@ -174,8 +179,8 @@ export async function createLink(_currentData: any, formData: FormData) {
 
     const requestData = Object.fromEntries(
       Object.entries({
-        name: formData.get("name"),
-        url: formData.get("url"),
+        name,
+        url,
         logo,
       }).filter(([_, v]) => v),
     );
