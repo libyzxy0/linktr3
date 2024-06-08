@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import type { User } from "@/types";
 import axios from "axios";
 
 import { apiBase } from "@/constants";
@@ -11,60 +10,39 @@ export async function middleware(request: NextRequest) {
   const authtoken = request.cookies.get("authtoken")?.value;
   const pathname = request.nextUrl.pathname;
 
-  if (pathname.startsWith("/login")) {
+  // Helper function to verify token
+  const verifyToken = async (token: string) => {
+    try {
+      const { data } = await axios.get(`${apiBase}/api/get-session`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return data;
+    } catch (error) {
+      console.error("Token verification error:", error.message);
+      return null;
+    }
+  };
+
+  // Redirect to dashboard if accessing root and authenticated
+  if (pathname === "/" || pathname === '/login' || pathname === '/signup') {
+    if (authtoken) {
+      const user = await verifyToken(authtoken);
+      if (user) {
+        return NextResponse.redirect(new URL("/dashboard", request.url));
+      }
+    }
     return NextResponse.next();
   }
 
-  if (pathname === "/") {
-    if (authtoken) {
-      try {
-        const { data }: { data: User } = await axios.get(
-          `${apiBase}/api/get-session`,
-          {
-            headers: {
-              Authorization: `Bearer ${authtoken}`,
-            },
-          },
-        );
-
-        if (data) {
-          return NextResponse.redirect(new URL("/dashboard", request.url));
-        }
-      } catch (error: any) {
-        console.log(error);
-        return NextResponse.next();
-      }
-    } else {
-      return NextResponse.next();
-    }
-  }
-
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route),
-  );
-
-  if (isProtectedRoute) {
+  // Check for protected routes
+  if (protectedRoutes.some((route) => pathname.startsWith(route))) {
     if (!authtoken) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
-
-    try {
-      const { data }: { data: User } = await axios.get(
-        `${apiBase}/api/get-session`,
-        {
-          headers: {
-            Authorization: `Bearer ${authtoken}`,
-          },
-        },
-      );
-
-      if (data) {
-        return NextResponse.next();
-      } else {
-        return NextResponse.redirect(new URL("/login", request.url));
-      }
-    } catch (error: any) {
-      console.log(error)
+    const user = await verifyToken(authtoken);
+    if (!user) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
   }

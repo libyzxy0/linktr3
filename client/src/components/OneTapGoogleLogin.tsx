@@ -17,7 +17,6 @@ function OneTap() {
   const router = useRouter();
   useGoogleOneTapLogin({
     onSuccess: async (credentials) => {
-      console.log(credentials.credential);
       try {
         const { data } = await axios.post(
           apiBase + "/api/oauth",
@@ -32,14 +31,17 @@ function OneTap() {
 
         if (data.success) {
           Cookies.set("authtoken", data.token, { expires: 7 });
-          router.push("/dashboard");
+          console.log("Logged In using google one tap");
+          setTimeout(() => {
+            router.push("/dashboard");
+          }, 1000);
         }
       } catch (error: any) {
-        console.error("Failed to login using one tap by google:", error);
+        console.error("Failed to login using google one tap:", error);
       }
     },
     onError: () => {
-      console.error("An error occurred during Google One Tap login.");
+      console.error("An error occurred during google one tap login.");
     },
   });
   return <></>;

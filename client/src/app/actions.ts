@@ -7,227 +7,149 @@ import { upload } from "@/utils/lib/cld";
 import { Buffer } from "buffer";
 import type { CloudinaryResponseType } from "@/types";
 
+const axiosInstance = axios.create({
+  baseURL: apiBase,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+const getAuthToken = () => cookies().get("authtoken")?.value;
+
+const setAuthToken = (token: string) => {
+  cookies().set({
+    name: "authtoken",
+    value: token,
+    httpOnly: true,
+    path: "/",
+  });
+};
+
+const handleRequestError = (error: any) => {
+  console.error("Request failed:", error);
+  return {
+    error: true,
+    message: error.response ? error.response.data.message : error.message,
+  };
+};
+
+const uploadFile = async (file: File) => {
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+  const cld: CloudinaryResponseType = await upload(buffer);
+  return cld.secure_url;
+};
+
 export async function makeLogin(_currentData: any, formData: FormData) {
   try {
-    console.log(formData);
-    const { data } = await axios.post(
-      apiBase + "/api/login",
-      {
-        email: formData.get("email"),
-        password: formData.get("password"),
-      },
-      { headers: { "Content-Type": "application/json" } },
-    );
-    const token = data.jwt_token;
-    console.log("Token saved:", token);
-    cookies().set({
-      name: "authtoken",
-      value: token,
-      httpOnly: true,
-      path: "/",
+    const { data } = await axiosInstance.post("/api/login", {
+      email: formData.get("email"),
+      password: formData.get("password"),
     });
-    return {
-      error: false,
-      message: "Successfully logged in",
-    };
+    setAuthToken(data.jwt_token);
+    return { error: false, message: "Successfully logged in" };
   } catch (error: any) {
-    console.error("Failed to login:", error);
-    return {
-      error: true,
-      message: error.response ? error.response.data.message : error.message,
-    };
+    return handleRequestError(error);
   }
 }
 
 export async function createUser(_currentData: any, formData: FormData) {
   try {
-    console.log(formData);
-    const { data } = await axios.post(
-      apiBase + "/api/register",
-      {
-        name: formData.get("name"),
-        username: formData.get("username"),
-        email: formData.get("email"),
-        password: formData.get("password"),
-        avatar: "",
-        bio: "",
-      },
-      { headers: { "Content-Type": "application/json" } },
-    );
-    if(data.success) {
-      cookies().set({
-        name: "authtoken",
-        value: data.jwt_token,
-        httpOnly: true,
-        path: "/",
+    const { data } = await axiosInstance.post("/api/register", {
+      name: formData.get("name"),
+      username: formData.get("username"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+      avatar: "",
+      bio: "",
     });
-    }
-    return {
-      error: false,
-      message: data.message,
-    };
+    if (data.success) setAuthToken(data.jwt_token);
+    return { error: false, message: data.message };
   } catch (error: any) {
-    console.error("Failed to create your account:", error);
-    return {
-      error: true,
-      message: error.response ? error.response.data.message : error.message,
-    };
+    return handleRequestError(error);
   }
 }
 
 export async function updateUsername(_currentData: any, formData: FormData) {
   try {
-    const cookieStore = cookies();
-    const token = cookieStore.get("authtoken");
+    const token = getAuthToken();
+    if (!token) return { error: true, message: "No authtoken provided" };
 
-    if (token) {
-      const { data } = await axios.post(
-        apiBase + "/api/update-user",
-        {
-          username: formData.get("username"),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token?.value}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
+    await axiosInstance.post(
+      "/api/update-user",
+      { username: formData.get("username") },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
-      revalidatePath("/dashboard");
-    } else {
-      return {
-        error: true,
-        message: "No authtoken provided",
-      };
-    }
+    revalidatePath("/dashboard");
+    return { error: false, message: "Username updated successfully" };
   } catch (error: any) {
-    console.error("Failed to create your account:", error);
-    return {
-      error: true,
-      message: error.response ? error.response.data.message : error.message,
-    };
+    return handleRequestError(error);
   }
 }
+
 export async function verifyOtp(_currentData: any, formData: FormData) {
   try {
-    const otp = formData.get('otp');
-    if(!otp) {
-      return {
-        error: true,
-        message: "Please enter otp",
-      };
-    }
-    const { data } = await axios.post(apiBase + '/api/verify-otp', {
-      email: formData.get('email'), 
-      otp, 
-      f: 'verify'
-    })
-    if(data.success) {
+    const otp = formData.get("otp");
+    if (!otp) return { error: true, message: "Please enter otp" };
+
+    const { data } = await axiosInstance.post("/api/otp", {
+      email: formData.get("email"),
+      otp,
+      f: "verify",
+    });
+    if (data.success) {
       revalidatePath("/dashboard");
-    } else {
-      return {
-        error: true,
-        message: data.message,
-      };
+      return { error: false, message: "OTP verified successfully" };
     }
+    return { error: true, message: data.message };
   } catch (error: any) {
-    console.error("Failed to verify your otp:", error);
-    return {
-      error: true,
-      message: error.response ? error.response.data.message : error.message,
-    };
+    return handleRequestError(error);
   }
 }
+
 export async function generateOtp(_currentData: any, formData: FormData) {
   try {
-    const { data } = await axios.post(apiBase + '/api/verify-otp', {
-      email: formData.get('email'), 
-      f: 'regenerate'
-    })
-    if(data.success) {
-      revalidatePath("/dashboard");
-    } else {
-      return {
-        error: true,
-        message: data.message,
-      };
-    }
+    const { data } = await axiosInstance.post("/api/otp", {
+      email: formData.get("email"),
+      f: "regenerate",
+    });
+    return { error: !data.success, message: data.message };
   } catch (error: any) {
-    console.error("Failed to regenerate your otp:", error);
-    return {
-      error: true,
-      message: error.response ? error.response.data.message : error.message,
-    };
+    return handleRequestError(error);
   }
 }
 
 export async function updateUser(_currentData: any, formData: FormData) {
   try {
-    const cookieStore = cookies();
-    const token = cookieStore.get("authtoken");
+    const token = getAuthToken();
+    if (!token) return { error: true, message: "No authtoken provided" };
 
-    if (!token) {
-      return {
-        error: true,
-        message: "No authtoken provided",
-      };
-    }
-    let avatar;
-    let cover;
+    const avatarPromise = formData.get("avatar") ? uploadFile(formData.get("avatar") as File) : undefined;
+    const coverPromise = formData.get("cover") ? uploadFile(formData.get("cover") as File) : undefined;
 
-    const av = formData.get("avatar") as unknown as File;
+    const [avatar, cover] = await Promise.all([avatarPromise, coverPromise]);
 
-    if (av) {
-      const arrayBuffer = await av.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-      const cld: CloudinaryResponseType = await upload(buffer);
-      avatar = cld?.secure_url;
-    }
-
-    const cv = formData.get("cover") as unknown as File;
-
-    if (cv) {
-      const arrayBuffer = await cv.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-      const cld: CloudinaryResponseType = await upload(buffer);
-      cover = cld?.secure_url;
-    }
-
-    const formDataEntries = {
-      username: formData.get("username"),
-      name: formData.get("name"),
-      bio: formData.get("bio"),
-      password: formData.get("password"),
-      email: formData.get("email"),
-      avatar: avatar,
-      cover: cover,
-    };
     const requestData = Object.fromEntries(
-      Object.entries(formDataEntries).filter(([_, v]) => v),
+      Object.entries({
+        username: formData.get("username"),
+        name: formData.get("name"),
+        bio: formData.get("bio"),
+        password: formData.get("password"),
+        email: formData.get("email"),
+        avatar,
+        cover,
+      }).filter(([_, v]) => v)
     );
-    const { data } = await axios.post(
-      apiBase + "/api/update-user",
-      requestData,
-      {
-        headers: {
-          Authorization: `Bearer ${token?.value}`,
-          "Content-Type": "application/json",
-        },
-      },
-    );
+
+    await axiosInstance.post("/api/update-user", requestData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
     revalidatePath("/dashboard/profile");
-    return {
-      error: false,
-      message: "Success",
-    };
+    return { error: false, message: "Account updated successfully" };
   } catch (error: any) {
-    console.error("Failed to update your account:", error);
-    return {
-      error: true,
-      message: error.response ? error.response.data.message : error.message,
-    };
+    return handleRequestError(error);
   }
 }
 
@@ -238,61 +160,27 @@ export async function handleLogout() {
 
 export async function createLink(_currentData: any, formData: FormData) {
   try {
-    const cookieStore = cookies();
-    const token = cookieStore.get("authtoken");
+    const token = getAuthToken();
+    if (!token) return { error: true, message: "Session not found" };
 
-    if (!token) {
-      return {
-        error: true,
-        message: "Session not found",
-      };
-    }
+    const logoPromise = formData.get("logo") ? uploadFile(formData.get("logo") as File) : undefined;
+    const logo = await logoPromise;
 
-    let logo;
-
-    const file = formData.get("logo") as unknown as File;
-
-    if (file) {
-      const arrayBuffer = await file.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-      const cld: CloudinaryResponseType = await upload(buffer);
-      logo = cld?.secure_url;
-    }
-
-    type RequestType = {
-      name: string;
-      url: string;
-      logo?: string;
-    };
-
-    const requestBody = {
-      name: formData.get("name"),
-      url: formData.get("url"),
-      logo,
-    };
-
-    const requestData = Object.fromEntries(Object.entries(requestBody).filter(([_, v]) => v));
-
-    const { data } = await axios.post(
-      apiBase + "/api/create-link",
-      requestData,
-      {
-        headers: {
-          Authorization: `Bearer ${token?.value}`,
-          "Content-Type": "application/json",
-        },
-      },
+    const requestData = Object.fromEntries(
+      Object.entries({
+        name: formData.get("name"),
+        url: formData.get("url"),
+        logo,
+      }).filter(([_, v]) => v)
     );
+
+    await axiosInstance.post("/api/create-link", requestData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
     revalidatePath("/dashboard/links");
-    return {
-      error: false,
-      message: "Link created successfully",
-    };
+    return { error: false, message: "Link created successfully" };
   } catch (error: any) {
-    console.log(error);
-    return {
-      error: true,
-      message: error.response ? error.response.data.message : error.message,
-    };
+    return handleRequestError(error);
   }
 }

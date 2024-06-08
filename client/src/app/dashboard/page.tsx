@@ -9,7 +9,7 @@ import Link from "next/link";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { DashboardButtons } from "@/components/DashboardButtons";
 import type { Metadata } from "next";
-import VerifyOtp from '@/components/VerifyOtp'
+import VerifyOtp from "@/components/VerifyOtp";
 
 export const metadata: Metadata = {
   title: "Linktr3 | Dashboard",
@@ -23,18 +23,18 @@ export default async function Dashboard() {
     apiBase + "/api/get-session",
     {
       params: {
-        links: true
+        links: true,
       },
       headers: {
         Authorization: `Bearer ${token?.value}`,
       },
     },
   );
-  
+
   if (!user.email_verified) {
     return <VerifyOtp user={user} />;
   }
-  
+
   if (!user.username) {
     return <UpdateUsername user={user} />;
   }
@@ -50,7 +50,7 @@ export default async function Dashboard() {
             <ModeToggle />
             {user && (
               <ProfileAvatar
-                avatar={user ? user.avatar : "https://http.cat/404"}
+                avatar={user ? user.avatar : `https://ui-avatars.com/api/?background=fff&color=38bdf8&bold=true&name=${user.name}`}
                 name={user ? user.name : "AE"}
               />
             )}
@@ -92,15 +92,15 @@ export default async function Dashboard() {
                 <h1 className="text-gray-700 dark:text-white font-medium">
                   Total Clicks
                 </h1>
-                <h1 className="text-gray-700 dark:text-white font-bold">
-                  0
-                </h1>
+                <h1 className="text-gray-700 dark:text-white font-bold">0</h1>
               </li>
               <li className="flex items-center justify-between">
                 <h1 className="text-gray-700 dark:text-white font-medium">
                   Total Links
                 </h1>
-                <h1 className="text-gray-700 dark:text-white font-bold">{user.links ? user.links.length : 0}</h1>
+                <h1 className="text-gray-700 dark:text-white font-bold">
+                  {user.links ? user.links.length : 0}
+                </h1>
               </li>
               <li className="flex items-center justify-between">
                 <h1 className="text-gray-700 dark:text-white font-medium">

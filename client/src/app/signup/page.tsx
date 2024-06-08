@@ -35,14 +35,14 @@ export default function Signup() {
   const router = useRouter();
 
   useEffect(() => {
-    if (state.message) {
+    if (state?.message) {
       if (state.error) {
         toast.error(state.message);
       } else {
         toast.success(state.message);
         setTimeout(() => {
           router.push("/dashboard");
-        }, 2000);
+        }, 1000);
       }
     }
   }, [state, router]);

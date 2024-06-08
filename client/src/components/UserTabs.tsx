@@ -56,11 +56,12 @@ const UserTabs: React.FC<UserTabsProps> = ({ links, cards, error }) => {
               </ButtonLink>
             ))
           ) : (
-          <div className="flex flex-col items-center text-gray-300 mt-5 dark:text-gray-600">
-            <Network strokeWidth={1.8} className="w-28 h-28" />
-            <h1 className="text-gray-300 dark:text-gray-600 text-xl mt-3">{"There's no links yet."}
-            </h1>
-          </div>
+            <div className="flex flex-col items-center text-gray-300 mt-5 dark:text-gray-600">
+              <Network strokeWidth={1.8} className="w-28 h-28" />
+              <h1 className="text-gray-300 dark:text-gray-600 text-xl mt-3">
+                {"There's no links yet."}
+              </h1>
+            </div>
           )}
         </div>
       )}
@@ -85,7 +86,7 @@ const UserTabs: React.FC<UserTabsProps> = ({ links, cards, error }) => {
                 <div className="flex flex-col items-center text-gray-300 mt-5 dark:text-gray-600">
                   <Blocks strokeWidth={1.8} className="w-28 h-28" />
                   <h1 className="text-gray-300 dark:text-gray-600 text-xl mt-3">
-                    ${"There's no cards yet."}
+                    {"There's no cards yet."}
                   </h1>
                 </div>
               )}
