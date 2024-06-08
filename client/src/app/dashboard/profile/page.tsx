@@ -54,22 +54,18 @@ export default async function EditProfile() {
           </div>
         </nav>
         <div className="w-full flex flex-col">
-         {user.cover ? (
-          <Image
-            className="w-full h-28 md:h-44 border-b-4 border-gray-300 dark:border-gray-800"
-            src={
-              user.cover
-                ? user.cover
-                : ""
-            }
-            width={500}
-            height={200}
-            priority={true}
-            alt="Cover"
-          />
-         ) : (
-           <div className="w-full h-28 bg-gradient-to-r from-sky-400 to-sky-300"></div>
-           )}
+          {user.cover ? (
+            <Image
+              className="w-full h-28 md:h-44 border-b-4 border-gray-300 dark:border-gray-800"
+              src={user.cover}
+              width={500}
+              height={200}
+              priority={true}
+              alt="Cover"
+            />
+          ) : (
+            <div className="w-full h-28 bg-gradient-to-r from-sky-400 to-sky-300"></div>
+          )}
 
           <div className="relative">
             {user && (

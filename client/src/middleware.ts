@@ -26,7 +26,7 @@ export async function middleware(request: NextRequest) {
   };
 
   // Redirect to dashboard if accessing root and authenticated
-  if (pathname === "/" || pathname === '/login' || pathname === '/signup') {
+  if (pathname === "/" || pathname === "/login" || pathname === "/signup") {
     if (authtoken) {
       const user = await verifyToken(authtoken);
       if (user) {

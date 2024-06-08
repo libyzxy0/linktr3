@@ -30,15 +30,18 @@ export default function VerifyOtp({ user }: { user: User }) {
       formData.append("email", user.email);
       formVAction(formData);
       const expireTime = new Date().getTime() + 180000; // 3 minutes in milliseconds
-      Cookies.set('otp-timer', expireTime.toString(), { expires: 1 }); // Expires in 1 day to handle edge cases
+      Cookies.set("otp-timer", expireTime.toString(), { expires: 1 }); // Expires in 1 day to handle edge cases
       setTimeLeft(180);
     }
   };
 
   useEffect(() => {
-    const savedExpireTime = Cookies.get('otp-timer');
+    const savedExpireTime = Cookies.get("otp-timer");
     if (savedExpireTime) {
-      const timeLeft = Math.max(0, Math.floor((parseInt(savedExpireTime) - new Date().getTime()) / 1000));
+      const timeLeft = Math.max(
+        0,
+        Math.floor((parseInt(savedExpireTime) - new Date().getTime()) / 1000),
+      );
       setTimeLeft(timeLeft);
       setCookieLoading(false);
     } else {
@@ -49,11 +52,11 @@ export default function VerifyOtp({ user }: { user: User }) {
   useEffect(() => {
     if (timeLeft !== null && timeLeft > 0) {
       const interval = setInterval(() => {
-        setTimeLeft(prevTime => {
+        setTimeLeft((prevTime) => {
           const newTime = prevTime - 1;
           if (newTime <= 0) {
             clearInterval(interval);
-            Cookies.remove('otp-timer');
+            Cookies.remove("otp-timer");
           }
           return Math.max(newTime, 0);
         });
@@ -126,19 +129,22 @@ export default function VerifyOtp({ user }: { user: User }) {
               {timeLeft !== null && (
                 <h1
                   onClick={handleOtpResend}
-                  className={`font-medium mt-2 text-right hover:underline cursor-pointer ${timeLeft > 0 ? 'pointer-events-none text-gray-500 dark:text-gray-300' : 'text-sky-400'}`}
+                  className={`font-medium mt-2 text-right hover:underline cursor-pointer ${timeLeft > 0 ? "pointer-events-none text-gray-500 dark:text-gray-300" : "text-sky-400"}`}
                 >
                   {timeLeft > 0
                     ? minutes > 0
-                      ? `Resend after ${minutes}:${seconds.toString().padStart(2, '0')}m`
+                      ? `Resend after ${minutes}:${seconds.toString().padStart(2, "0")}m`
                       : `${seconds}s`
                     : "Resend OTP"}
                 </h1>
               )}
               <SubmitButton className="mt-4">Verify OTP</SubmitButton>
             </form>
-            
-            <p className="text-center text-gray-700 dark:text-gray-200 mt-20">This will redirect you to Dashboard page if you entered the OTP correctly</p>
+
+            <p className="text-center text-gray-700 dark:text-gray-200 mt-20">
+              This will redirect you to Dashboard page if you entered the OTP
+              correctly
+            </p>
           </div>
         </div>
       </main>

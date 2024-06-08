@@ -13,13 +13,13 @@ export const Navbar = () => {
   return (
     <>
       <nav className="h-24 md:h-28 bg-white dark:bg-gray-950 md:h-16 flex items-center justify-between px-6 md:px-10">
-      <div className="flex flex-row items-center">
-        <h1 className="font-bold text-[1.7rem] text-gray-700 dark:text-white md:text-3xl">
-          <span className="text-sky-400">Link</span>tr3🌲
-        </h1>
-        <div className="mx-3">
-          <ModeToggle />
-        </div>
+        <div className="flex flex-row items-center">
+          <h1 className="font-bold text-[1.7rem] text-gray-700 dark:text-white md:text-3xl">
+            <span className="text-sky-400">Link</span>tr3🌲
+          </h1>
+          <div className="mx-3">
+            <ModeToggle />
+          </div>
         </div>
         <button
           onClick={toggleMenu}

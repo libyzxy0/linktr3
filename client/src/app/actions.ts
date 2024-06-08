@@ -78,7 +78,7 @@ export async function updateUsername(_currentData: any, formData: FormData) {
     await axiosInstance.post(
       "/api/update-user",
       { username: formData.get("username") },
-      { headers: { Authorization: `Bearer ${token}` } }
+      { headers: { Authorization: `Bearer ${token}` } },
     );
 
     revalidatePath("/dashboard");
@@ -125,8 +125,12 @@ export async function updateUser(_currentData: any, formData: FormData) {
     const token = getAuthToken();
     if (!token) return { error: true, message: "No authtoken provided" };
 
-    const avatarPromise = formData.get("avatar") ? uploadFile(formData.get("avatar") as File) : undefined;
-    const coverPromise = formData.get("cover") ? uploadFile(formData.get("cover") as File) : undefined;
+    const avatarPromise = formData.get("avatar")
+      ? uploadFile(formData.get("avatar") as File)
+      : undefined;
+    const coverPromise = formData.get("cover")
+      ? uploadFile(formData.get("cover") as File)
+      : undefined;
 
     const [avatar, cover] = await Promise.all([avatarPromise, coverPromise]);
 
@@ -139,7 +143,7 @@ export async function updateUser(_currentData: any, formData: FormData) {
         email: formData.get("email"),
         avatar,
         cover,
-      }).filter(([_, v]) => v)
+      }).filter(([_, v]) => v),
     );
 
     await axiosInstance.post("/api/update-user", requestData, {
@@ -163,7 +167,9 @@ export async function createLink(_currentData: any, formData: FormData) {
     const token = getAuthToken();
     if (!token) return { error: true, message: "Session not found" };
 
-    const logoPromise = formData.get("logo") ? uploadFile(formData.get("logo") as File) : undefined;
+    const logoPromise = formData.get("logo")
+      ? uploadFile(formData.get("logo") as File)
+      : undefined;
     const logo = await logoPromise;
 
     const requestData = Object.fromEntries(
@@ -171,7 +177,7 @@ export async function createLink(_currentData: any, formData: FormData) {
         name: formData.get("name"),
         url: formData.get("url"),
         logo,
-      }).filter(([_, v]) => v)
+      }).filter(([_, v]) => v),
     );
 
     await axiosInstance.post("/api/create-link", requestData, {

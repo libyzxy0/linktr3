@@ -48,12 +48,7 @@ export default async function Dashboard() {
           </h1>
           <div className="flex flex-row items-center space-x-3 mx-4">
             <ModeToggle />
-            {user && (
-              <ProfileAvatar
-                avatar={user ? user.avatar : `https://ui-avatars.com/api/?background=fff&color=38bdf8&bold=true&name=${user.name}`}
-                name={user ? user.name : "AE"}
-              />
-            )}
+            {user && <ProfileAvatar avatar={user.avatar} name={user.name} />}
           </div>
         </nav>
 
