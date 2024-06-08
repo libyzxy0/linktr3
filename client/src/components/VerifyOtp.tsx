@@ -97,13 +97,13 @@ export default function VerifyOtp({ user }: { user: User }) {
             <b className="text-sky-400">Link</b>tr3🌲
           </h1>
           <h1 className="mt-12 text-gray-700 dark:text-white font-bold text-[26px]">
-            Verify your <b className="text-sky-400">OTP</b>
+            Verify your <b className="text-sky-400">Email</b>
           </h1>
           <p className="mt-3 text-gray-600 dark:text-gray-300">
             Hello <b className="text-sky-400">{user.email}</b>
             {" we've sent an OTP to your email, please enter the OTP here"}
           </p>
-          <form className="flex flex-col" onSubmit={formAction}>
+          <form className="flex flex-col" action={formAction}>
             <input
               type="email"
               name="email"
