@@ -19,7 +19,7 @@ export async function middleware(request: NextRequest) {
         },
       });
       return data;
-    } catch (error) {
+    } catch (error: any) {
       console.error("Token verification error:", error.message);
       return null;
     }
